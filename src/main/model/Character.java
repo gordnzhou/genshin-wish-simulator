@@ -1,5 +1,6 @@
 package model;
 
+// represents a wish of type character
 public class Character extends Wish {
     public enum Element {
         ANEMO,

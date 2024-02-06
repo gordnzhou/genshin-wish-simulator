@@ -1,5 +1,6 @@
 package model;
 
+// represents a wish of type weapon
 public class Weapon extends Wish {
     public enum WeaponType {
         BOW,
