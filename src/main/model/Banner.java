@@ -67,8 +67,7 @@ public class Banner {
         int randNum = random.nextInt(ACCURACY);
         if (randNum <= fiveStarRate * ACCURACY / 100) {
             return randomFiveStar();
-        }
-        if (randNum <= fourStarRate * ACCURACY / 100) {
+        } else if (randNum <= fourStarRate * ACCURACY / 100) {
             return randomFourStar();
         }
         return randomThreeStar();
@@ -92,8 +91,7 @@ public class Banner {
     private double calcStarRate(int wishesSoFar, double baseRate, int softPity, int hardPity) {
         if (wishesSoFar >= hardPity) {
             return 100;
-        }
-        if (wishesSoFar >= softPity) {
+        } else if (wishesSoFar >= softPity) {
             return baseRate + (5.85 * (wishesSoFar - softPity));
         }
         return baseRate;
