@@ -14,16 +14,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BannerTest {
     private Banner testBannerA;
     private Banner testBannerB;
+    private Banner testBannerC;
+    private Banner testBannerW;
 
     private List<Wish> wishPoolA;
     private List<Wish> wishPoolB;
+    private List<Wish> wishPool;
+    private List<Wish> wishPoolW;
 
     @BeforeEach
     void runBefore() {
+        wishPool = new ArrayList<>();
+        wishPool.add(new Character(4, "Amber", Element.PYRO, WeaponType.BOW));
+        testBannerC = new Banner("Banner C", wishPool);
+
+        wishPoolW = new ArrayList<>();
+        wishPoolW.add(new Weapon(3, "Sword", Weapon.WeaponType.SWORD));
+        testBannerW = new Banner("Banner W", wishPoolW);
+
         wishPoolA = new ArrayList<>();
         wishPoolA.add(new Character(5, "Jean", Element.ANEMO, WeaponType.SWORD));
         wishPoolA.add(new Character(4, "Amber", Element.PYRO, WeaponType.BOW));
         wishPoolA.add(new Weapon(3, "Sword", Weapon.WeaponType.SWORD));
+        testBannerA = new Banner("Banner A", wishPoolA);
 
         wishPoolB = new ArrayList<>();
         wishPoolB.addAll(wishPoolA);
@@ -34,8 +47,6 @@ class BannerTest {
         wishPoolB.add(new Weapon(3, "bb", Weapon.WeaponType.POLEARM));
         wishPoolB.add(new Weapon(3, "cc", Weapon.WeaponType.BOW));
         wishPoolB.add(new Weapon(5, "dd", Weapon.WeaponType.CATALYST));
-
-        testBannerA = new Banner("Banner A", wishPoolA);
         testBannerB = new Banner("Banner B", wishPoolB);
     }
 
@@ -44,6 +55,7 @@ class BannerTest {
         assertEquals(testBannerA.getFiveStarPity(), 0);
         assertEquals(testBannerA.getFourStarPity(), 0);
         assertEquals(testBannerA.getWishCount(), 0);
+        assertEquals(testBannerA.getName(), "Banner A");
 
         for (Wish wish : testBannerA.getThreeStars()) {
             assertEquals(wish.getRarity(), 3);
@@ -85,6 +97,13 @@ class BannerTest {
                 assertEquals(testBannerA.getFourStarPity(), 0);
             } else if (wish.getRarity() == 5) {
                 assertEquals(testBannerA.getFiveStarPity(), 0);
+            }
+
+            if (wish instanceof Character) {
+                assertTrue(((Character) wish).getVision() != null);
+                assertTrue(((Character) wish).getPreferredWeapon() != null);
+            } else {
+                assertTrue(((Weapon) wish).getWeaponType() != null);
             }
         }
     }
