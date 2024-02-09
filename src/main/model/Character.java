@@ -1,5 +1,7 @@
 package model;
 
+import model.Weapon.WeaponType;
+
 // represents a wish of type character
 public class Character extends Wish {
     public enum Element {
@@ -13,16 +15,21 @@ public class Character extends Wish {
     }
 
     private Element vision;
+    private WeaponType preferredWeapon;
 
     // REQUIRES: rarity must be in the interval [3, 5]
-    // EFFECTS: instantiates a character with given name and rarity
-    public Character(int rarity, String name, Element vision) {
+    // EFFECTS: instantiates a character with given name, rarity and preferred weapon
+    public Character(int rarity, String name, Element vision, WeaponType preferredWeapon) {
         super(rarity, name);
         this.vision = vision;
+        this.preferredWeapon = preferredWeapon;
     }
 
-    // EFFECTS: returns this character's vision element
     public Element getVision() {
         return vision;
+    }
+
+    public WeaponType getPreferredWeapon() {
+        return preferredWeapon;
     }
 }

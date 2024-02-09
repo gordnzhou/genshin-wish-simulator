@@ -1,4 +1,6 @@
 package model;
+import model.Weapon.WeaponType;
+import model.Character.Element;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,17 +21,17 @@ class BannerTest {
     @BeforeEach
     void runBefore() {
         wishPoolA = new ArrayList<>();
-        wishPoolA.add(new Character(5, "Jean", Character.Element.ANEMO));
-        wishPoolA.add(new Character(4, "Amber", Character.Element.PYRO));
+        wishPoolA.add(new Character(5, "Jean", Element.ANEMO, WeaponType.SWORD));
+        wishPoolA.add(new Character(4, "Amber", Element.PYRO, WeaponType.BOW));
         wishPoolA.add(new Weapon(3, "Sword", Weapon.WeaponType.SWORD));
 
         wishPoolB = new ArrayList<>();
         wishPoolB.addAll(wishPoolA);
-        wishPoolB.add(new Character(5, "Diluc", Character.Element.PYRO));
-        wishPoolB.add(new Character(4, "Lisa", Character.Element.ELECTRO));
-        wishPoolB.add(new Character(4, "Kaeya", Character.Element.CRYO));
+        wishPoolB.add(new Character(5, "Diluc", Element.PYRO, WeaponType.GREATSWORD));
+        wishPoolB.add(new Character(4, "Lisa", Element.ELECTRO, WeaponType.CATALYST));
+        wishPoolB.add(new Character(4, "Kaeya", Element.CRYO, WeaponType.SWORD));
         wishPoolB.add(new Weapon(3, "aa", Weapon.WeaponType.GREATSWORD));
-        wishPoolB.add(new Weapon(3, "bb", Weapon.WeaponType.SPEAR));
+        wishPoolB.add(new Weapon(3, "bb", Weapon.WeaponType.POLEARM));
         wishPoolB.add(new Weapon(3, "cc", Weapon.WeaponType.BOW));
         wishPoolB.add(new Weapon(5, "dd", Weapon.WeaponType.CATALYST));
 

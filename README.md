@@ -17,5 +17,5 @@ bring that excitement to a broader audience.
 - I want to wish for characters/weapons, and add them to my collection
 - I want to view a list of characters/weapons I've obtained so far
 - I want to add and spend currency used for making wishes
-- I want to be able to wish from multiple types of banners 
-(each with different character/weapon pools)
+- I want to be able to view information about each character/weapon 
+- (ex. name, element, weapon type)

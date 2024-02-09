@@ -30,16 +30,21 @@ public class WishSim {
     // EFFECTS: initialize all banners and loads in their wish pool
     public void init() {
         List<Wish> wishPool = new ArrayList<>(); // change to load from a JSON
-        wishPool.add(new Character(5, "Jean", Character.Element.ANEMO));
-        wishPool.add(new Character(4, "Amber", Character.Element.PYRO));
-        wishPool.add(new Weapon(3, "Sword", Weapon.WeaponType.SWORD));
-        wishPool.add(new Character(5, "Diluc", Character.Element.PYRO));
-        wishPool.add(new Character(4, "Lisa", Character.Element.ELECTRO));
-        wishPool.add(new Character(4, "Kaeya", Character.Element.CRYO));
-        wishPool.add(new Weapon(3, "aa", Weapon.WeaponType.GREATSWORD));
-        wishPool.add(new Weapon(3, "bb", Weapon.WeaponType.SPEAR));
-        wishPool.add(new Weapon(3, "cc", Weapon.WeaponType.BOW));
-        wishPool.add(new Weapon(5, "dd", Weapon.WeaponType.CATALYST));
+        wishPool.add(new Character(5, "Jean", Character.Element.ANEMO, Weapon.WeaponType.SWORD));
+        wishPool.add(new Character(5, "Diluc", Character.Element.PYRO, Weapon.WeaponType.GREATSWORD));
+        wishPool.add(new Character(5, "Mona", Character.Element.HYDRO, Weapon.WeaponType.CATALYST));
+        wishPool.add(new Weapon(5, "Aquila Favonia", Weapon.WeaponType.SWORD));
+        wishPool.add(new Character(4, "Amber", Character.Element.PYRO, Weapon.WeaponType.BOW));
+        wishPool.add(new Character(4, "Lisa", Character.Element.ELECTRO, Weapon.WeaponType.CATALYST));
+        wishPool.add(new Character(4, "Kaeya", Character.Element.CRYO, Weapon.WeaponType.SWORD));
+        wishPool.add(new Character(4, "Xiangling", Character.Element.PYRO, Weapon.WeaponType.POLEARM));
+        wishPool.add(new Character(4, "Ningguang", Character.Element.GEO, Weapon.WeaponType.CATALYST));
+        wishPool.add(new Character(4, "Yaoyao", Character.Element.DENDRO, Weapon.WeaponType.POLEARM));
+        wishPool.add(new Weapon(3, "Harbinger of Dawn", Weapon.WeaponType.SWORD));
+        wishPool.add(new Weapon(3, "Ferrous Shadow", Weapon.WeaponType.GREATSWORD));
+        wishPool.add(new Weapon(3, "Black Tassel", Weapon.WeaponType.POLEARM));
+        wishPool.add(new Weapon(3, "Recurve Bow", Weapon.WeaponType.BOW));
+        wishPool.add(new Weapon(5, "Magic Guide", Weapon.WeaponType.CATALYST));
         banner = new Banner("Banner 1", wishPool);
 
         input = new Scanner(System.in);
@@ -138,8 +143,8 @@ public class WishSim {
                     System.out.format("%d) '%s' (%d stars), Weapon Type: %s\n",
                             i, name, rarity, ((Weapon) wish).getWeaponType());
                 } else if (wish instanceof Character) {
-                    System.out.format("%d) '%s' (%d stars), Character Vision: %s\n",
-                            i, name, rarity, ((Character) wish).getVision());
+                    System.out.format("%d) '%s' (%d stars), Character Vision: %s, Preferred Weapon: %s\n",
+                            i, name, rarity, ((Character) wish).getVision(), ((Character) wish).getPreferredWeapon());
                 }
                 i++;
             }
@@ -178,6 +183,7 @@ public class WishSim {
                 System.out.format("%d) Obtained '%s' (%d stars)\n", i, wish.getName(), wish.getRarity());
             }
             i++;
+            // pause() for dramatic effect
         }
     }
 

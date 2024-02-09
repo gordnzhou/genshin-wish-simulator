@@ -6,7 +6,7 @@ public class Weapon extends Wish {
         BOW,
         CATALYST,
         GREATSWORD,
-        SPEAR,
+        POLEARM,
         SWORD,
     }
 
@@ -20,7 +20,6 @@ public class Weapon extends Wish {
         this.weaponType = weaponType;
     }
 
-    // EFFECTS: returns this weapon's type
     public WeaponType getWeaponType() {
         return weaponType;
     }
