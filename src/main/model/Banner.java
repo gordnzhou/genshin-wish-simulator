@@ -44,7 +44,7 @@ public class Banner {
                 fiveStars.add(wish);
             } else if (wish.getRarity() == 4) {
                 fourStars.add(wish);
-            } else if (wish.getRarity() == 3) {
+            } else {
                 threeStars.add(wish);
             }
         }
