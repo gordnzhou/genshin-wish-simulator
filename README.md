@@ -14,4 +14,8 @@ wishes contribute significantly to the game's appeal and this app will help
 bring that excitement to a broader audience.
 
 ## User Stories
-- I want to be able to wish for a character and add it to my collection
+- I want to wish for characters/weapons, and add them to my collection
+- I want to view a list of characters/weapons I've obtained so far
+- I want to add and spend currency used for making wishes
+- I want to be able to wish from multiple types of banners 
+(each with different character/weapon pools)
