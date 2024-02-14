@@ -9,16 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+// Genshin Wish Simulator
 public class WishSim {
     public static final int PRIMOGEMS_PER_WISH = 160;
 
     private Banner banner;
     private Scanner input;
 
-    private List<Wish> inventory; // change to hashmap in the future?
+    // change to hashmap in the future
+    private List<Wish> inventory;
     private int totalWishCount;
     private int primogems;
 
+    // REQUIRES: primogems >= 0
     // EFFECTS: instantiates WishSim with given primogems and an empty inventory
     public WishSim(int primogems) {
         this.inventory = new ArrayList<>();
@@ -27,9 +30,10 @@ public class WishSim {
     }
 
     // MODIFIES: this
-    // EFFECTS: initialize all banners and loads in their wish pool
+    // EFFECTS: initialize all input and banners and loads in their wish pool
     public void init() {
-        List<Wish> wishPool = new ArrayList<>(); // change to load from a JSON
+        // change to load from a JSON
+        List<Wish> wishPool = new ArrayList<>();
         wishPool.add(new Character(5, "Jean", Character.Element.ANEMO, Weapon.WeaponType.SWORD));
         wishPool.add(new Character(5, "Diluc", Character.Element.PYRO, Weapon.WeaponType.GREATSWORD));
         wishPool.add(new Character(5, "Mona", Character.Element.HYDRO, Weapon.WeaponType.CATALYST));
@@ -46,7 +50,6 @@ public class WishSim {
         wishPool.add(new Weapon(3, "Recurve Bow", Weapon.WeaponType.BOW));
         wishPool.add(new Weapon(5, "Magic Guide", Weapon.WeaponType.CATALYST));
         banner = new Banner("Banner 1", wishPool);
-
         input = new Scanner(System.in);
         input.useDelimiter("\n");
     }
@@ -70,6 +73,7 @@ public class WishSim {
 
     // MODIFIES: this
     // EFFECTS: processes user command and returns false if user wants to quit; true otherwise
+    //          will also pause the terminal after a valid command
     private boolean processCommand(String command) {
         switch (command) {
             case "i":
@@ -90,12 +94,14 @@ public class WishSim {
         return true;
     }
 
+    // MODIFIES: this
     // EFFECTS: pauses console and waits for key to be pressed
     private void pause() {
         System.out.println("(Press any key to continue)");
         input.nextLine();
     }
 
+    // MODIFIES: this
     // EFFECTS: repeatedly prompts user for a valid positive integer and returns it
     private int askForPositiveInt() {
         while (true) {
@@ -123,13 +129,13 @@ public class WishSim {
 
     // REQUIRES: amount > 0
     // MODIFIES: this
-    // EFFECTS: increments primogems by the given amount
+    // EFFECTS: increments primogems by the given amount and displays a message
     public void addPrimogems(int amount) {
         System.out.format("Successfully Added %d Primogems to Your Inventory.\n", amount);
         primogems += amount;
     }
 
-    // EFFECTS: prints a list showing wishes in current inventory
+    // EFFECTS: prints a list showing all wishes in current inventory
     private void viewInventory() {
         if (inventory.isEmpty()) {
             System.out.println("Your Inventory is Empty...");
@@ -154,7 +160,7 @@ public class WishSim {
     // REQUIRES: count > 0
     // MODIFIES: this
     // EFFECTS: if user has enough primogems, makes wish(es) from banner, adds them all to inventory
-    //           and prints the results; otherwise do nothing
+    //          and prints the results; otherwise do nothing
     public void makeWish(int count) {
         int cost = PRIMOGEMS_PER_WISH * count;
         if (primogems < cost) {
@@ -183,7 +189,6 @@ public class WishSim {
                 System.out.format("%d) Obtained '%s' (%d stars)\n", i, wish.getName(), wish.getRarity());
             }
             i++;
-            // pause() for dramatic effect
         }
     }
 

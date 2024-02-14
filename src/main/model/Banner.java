@@ -86,7 +86,7 @@ public class Banner {
     }
 
     // REQUIRES: 0 < baseRate < 100, softPity < hardPity, all parameters > 0
-    // EFFECTS: generates probability of a 5 star based on wishes done so far,
+    // EFFECTS: generates probability of a 5 star based on number of wishes done so far;
     //          100% if at hardPity, increased baseRate if at softPity, baseRate otherwise
     private double calcStarRate(int wishesSoFar, double baseRate, int softPity, int hardPity) {
         if (wishesSoFar >= hardPity) {
