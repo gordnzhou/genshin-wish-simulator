@@ -1,0 +1,31 @@
+{"data": [
+    [
+        {
+            "name": "Cool Steel",
+            "weapon_type": "SWORD",
+            "type": "weapon",
+            "rarity": 3
+        },
+        1
+    ],
+    [
+        {
+            "vision": "ANEMO",
+            "weapon": "SWORD",
+            "name": "Jean",
+            "type": "character",
+            "rarity": 5
+        },
+        10
+    ],
+    [
+        {
+            "vision": "PYRO",
+            "weapon": "BOW",
+            "name": "Amber",
+            "type": "character",
+            "rarity": 4
+        },
+        2
+    ]
+]}

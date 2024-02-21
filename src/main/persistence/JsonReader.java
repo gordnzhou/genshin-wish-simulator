@@ -7,7 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import model.Character;
@@ -29,6 +31,24 @@ public class JsonReader {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
         return parseBanner(jsonObject);
+    }
+
+    // EFFECTS: readers inventory from file and returns it;
+    // throws IOException if an error occurs reading data from file
+    public Map<Wish, Integer> readInventory() throws IOException {
+        String jsonData = readFile(source);
+        JSONObject jsonObject = new JSONObject(jsonData);
+        JSONArray data = jsonObject.getJSONArray("data");
+        Map<Wish, Integer> inventory = new HashMap<>();
+
+        for (Object item : data) {
+            JSONArray jsonArray = (JSONArray) item;
+            Wish wish = parseWish(jsonArray.getJSONObject(0));
+            int count = jsonArray.getInt(1);
+            inventory.put(wish, count);
+        }
+
+        return inventory;
     }
 
     // EFFECTS: reads source file as string and returns it

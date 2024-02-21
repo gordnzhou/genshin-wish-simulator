@@ -1,6 +1,6 @@
 package ui;
 
-import ui.WishSim;
+import model.Banner;
 import static ui.WishSim.PRIMOGEMS_PER_WISH;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,15 +14,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class WishSimTest {
     private WishSim testWishSim;
+    private Banner testBanner;
 
     @BeforeEach
     void runBefore() {
         try {
             testWishSim = new WishSim(900000);
-            testWishSim.init();
         } catch (FileNotFoundException e) {
             System.err.println("Unable to run simulator: file not found");
         }
+        testWishSim.init();
+        testBanner = testWishSim.getBanner();
     }
 
     @Test
@@ -31,6 +33,7 @@ public class WishSimTest {
         assertTrue(testWishSim.getInventory().isEmpty());
         assertEquals(testWishSim.getPrimogems(), 900000);
         assertEquals(testWishSim.getTotalWishCount(), 0);
+        assertTrue(testWishSim.getBanner() != null);
     }
 
     @Test
@@ -43,15 +46,15 @@ public class WishSimTest {
 
     @Test
     void testMakeWish() {
-        testWishSim.makeWish(1);
+        testWishSim.makeWish(testBanner, 1);
         assertEquals(testWishSim.getInventory().size(), 1);
         assertEquals(testWishSim.getTotalWishCount(), 1);
-        assertEquals(testWishSim.getPrimogems(), 900000 - PRIMOGEMS_PER_WISH * 1);
+        assertEquals(testWishSim.getPrimogems(), 900000 - PRIMOGEMS_PER_WISH);
     }
 
     @Test
     void testMakeWishFail() {
-        testWishSim.makeWish(10000);
+        testWishSim.makeWish(testBanner,10000);
         assertEquals(testWishSim.getInventory().size(), 0);
         assertEquals(testWishSim.getTotalWishCount(), 0);
         assertEquals(testWishSim.getPrimogems(), 900000);
@@ -59,11 +62,11 @@ public class WishSimTest {
 
     @Test
     void testMakeWishMany() {
-        testWishSim.makeWish(3);
+        testWishSim.makeWish(testBanner,3);
         assertEquals(testWishSim.getTotalWishCount(), 3);
         assertEquals(testWishSim.getPrimogems(), 900000 - PRIMOGEMS_PER_WISH * 3);
 
-        testWishSim.makeWish(100);
+        testWishSim.makeWish(testBanner,100);
         assertEquals(testWishSim.getTotalWishCount(), 103);
         assertEquals(testWishSim.getPrimogems(), 900000 - PRIMOGEMS_PER_WISH * 103);
     }

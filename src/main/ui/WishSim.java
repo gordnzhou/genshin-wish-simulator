@@ -12,10 +12,12 @@ import java.util.*;
 // Genshin Wish Simulator
 public class WishSim {
     public static final int PRIMOGEMS_PER_WISH = 160;
-    private static final String STANDARD_BANNER_JSON_PATH = "./data/standard_banner.json";
-    private static final String EVENT_BANNER_JSON_PATH = "./data/event_banner.json";
+    private static final String JSON_STORE = "./data/inventory.json";
+    private static final String STANDARD_BANNER_JSON_PATH = "./data/static/standard_banner.json";
+    private static final String EVENT_BANNER_JSON_PATH = "./data/static/event_banner.json";
 
     private Banner banner;
+    private Banner eventBanner;
     private Scanner input;
     private Map<Wish, Integer> inventory;
     private int totalWishCount;
@@ -28,27 +30,18 @@ public class WishSim {
     public WishSim(int primogems) throws FileNotFoundException {
         this.inventory = new HashMap<>();
         this.totalWishCount = 0;
-        jsonReader = new JsonReader(STANDARD_BANNER_JSON_PATH);
         this.primogems = primogems;
+        this.jsonReader = new JsonReader(JSON_STORE);
+        this.jsonWriter = new JsonWriter(JSON_STORE);
     }
 
     // MODIFIES: this
     // EFFECTS: initialize all input and banners and loads in their wish pool
     public void init() {
-        loadBanner();
+        banner = loadBannerFromPath(STANDARD_BANNER_JSON_PATH);
+        eventBanner = loadBannerFromPath(EVENT_BANNER_JSON_PATH);
         input = new Scanner(System.in);
         input.useDelimiter("\n");
-    }
-
-    // MODIFIES: this
-    // EFFECTS: loads banner from file
-    private void loadBanner() {
-        try {
-            banner = jsonReader.readBanner();
-            System.out.println("Loaded " + banner.getName() + " from " + STANDARD_BANNER_JSON_PATH);
-        } catch (IOException e) {
-            System.out.println("Unable to read from file: " + STANDARD_BANNER_JSON_PATH);
-        }
     }
 
     // MODIFIES: this
@@ -68,6 +61,19 @@ public class WishSim {
         System.out.println("Ok bye");
     }
 
+    // EFFECTS: loads banners from the JSON file at the given path and returns it
+    private Banner loadBannerFromPath(String path) {
+        try {
+            JsonReader bannerReader = new JsonReader(path);
+            Banner banner = bannerReader.readBanner();
+            System.out.println("Loaded " + banner.getName() + " from " + path);
+            return banner;
+        } catch (IOException e) {
+            System.out.println("Unable to banner read from path: " + path);
+            return null;
+        }
+    }
+
     // MODIFIES: this
     // EFFECTS: processes user command and returns false if user wants to quit; true otherwise
     //          will also pause the terminal after a valid command
@@ -77,10 +83,16 @@ public class WishSim {
                 viewInventory();
                 break;
             case "w":
-                makeWish(askForPositiveInt());
+                makeWish(askForBanner(), askForPositiveInt());
                 break;
             case "p":
                 addPrimogems(askForPositiveInt());
+                break;
+            case "l":
+                loadInventory();
+                break;
+            case "s":
+                saveInventory();
                 break;
             case "q":
                 return false;
@@ -99,6 +111,30 @@ public class WishSim {
     }
 
     // MODIFIES: this
+    // EFFECTS: loads inventory from JSON
+    private void loadInventory() {
+        try {
+            inventory = jsonReader.readInventory();
+            System.out.println("Loaded inventory from " + JSON_STORE);
+        } catch (IOException e) {
+            inventory = new HashMap<>();
+            System.out.println("Unable to banner read from path: " + JSON_STORE);
+        }
+    }
+
+    // EFFECTS: saves the inventory to file
+    private void saveInventory() {
+        try {
+            jsonWriter.open();
+            jsonWriter.writeInventory(inventory);
+            jsonWriter.close();
+            System.out.println("Saved inventory to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
+
+    // MODIFIES: this
     // EFFECTS: repeatedly prompts user for a valid positive integer and returns it
     private int askForPositiveInt() {
         while (true) {
@@ -113,6 +149,22 @@ public class WishSim {
         }
     }
 
+    private Banner askForBanner() {
+        while (true) {
+            System.out.format("Enter '0' to wish from standard banner: '%s', '1' for current Event Banner: '%s'\n",
+                    banner.getName(), eventBanner.getName());
+            int response = input.nextInt();
+            input.nextLine();
+            if (response == 0) {
+                return banner;
+            } else if (response == 1) {
+                return eventBanner;
+            } else {
+                System.out.println("Invalid input.");
+            }
+        }
+    }
+
     // EFFECTS: prints out a list of possible commands
     private void displayMenu() {
         System.out.format("You Currently Have %d Primogems\n", primogems);
@@ -120,6 +172,8 @@ public class WishSim {
         System.out.println("i => View Inventory");
         System.out.println("w => Make Wish");
         System.out.println("p => Add Primogems");
+        System.out.println("l => Load Inventory From File");
+        System.out.println("s => Save Current Inventory To File");
         System.out.println("q => Quit");
         System.out.print("Enter a command: ");
     }
@@ -159,19 +213,21 @@ public class WishSim {
     // MODIFIES: this
     // EFFECTS: if user has enough primogems, makes wish(es) from banner, adds them all to inventory
     //          and prints the results; otherwise do nothing
-    public void makeWish(int count) {
+    public void makeWish(Banner banner, int count) {
         int cost = PRIMOGEMS_PER_WISH * count;
         if (primogems < cost) {
             System.out.println("You do not have enough Primogems!");
             return;
         }
 
+        int start = banner.getFiveStarPity();
+
         List<Wish> wishes = banner.makeWish(count);
         totalWishCount += count;
         primogems -= cost;
 
         addWishes(wishes);
-        displayWishResults(wishes);
+        displayWishResults(wishes, start);
     }
 
     // MODIFIES: this
@@ -188,11 +244,13 @@ public class WishSim {
 
     // REQUIRES: wishes is non-empty
     // EFFECTS: prints wish results
-    private void displayWishResults(List<Wish> wishes) {
-        int i = 1;
+    private void displayWishResults(List<Wish> wishes, int start) {
+        // numbering based on five-star pity for the given banner
+        int i = start + 1;
         for (Wish wish : wishes) {
             if (wish.getRarity() == 5) {
                 System.out.format("%d) WOW!! Obtained '%s' (%d stars)!!!\n", i, wish.getName(), wish.getRarity());
+                i = 0;
             } else if (wish.getRarity() == 4) {
                 System.out.format("%d) wow! Obtained '%s' (%d stars)!\n", i, wish.getName(), wish.getRarity());
             } else if (wish.getRarity() == 3) {
@@ -212,6 +270,10 @@ public class WishSim {
 
     public Banner getBanner() {
         return banner;
+    }
+
+    public Banner getEventBanner() {
+        return eventBanner;
     }
 
     public int getPrimogems() {

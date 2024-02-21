@@ -1,0 +1,543 @@
+{
+    "name": "The Crane Soars Skyward",
+    "rate_up_five_star": {
+        "name": "Xianyun",
+        "type": "character",
+        "rarity": 5,
+        "weapon": "CATALYST",
+        "vision": "ANEMO"
+    },
+    "rate_up_four_stars": [
+		{
+			"name": "Gaming",
+			"type": "character",
+			"rarity": 4,
+			"weapon": "CLAYMORE",
+			"vision": "PYRO"
+		},
+		{
+			"name": "Faruzan",
+			"type": "character",
+			"rarity": 4,
+			"weapon": "BOW",
+			"vision": "ANEMO"
+		},
+		{
+			"name": "Noelle",
+			"type": "character",
+			"rarity": 4,
+			"weapon": "CLAYMORE",
+			"vision": "GEO"
+		}
+    ],
+    "wish_pool": [
+      {
+        "name": "Amber",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "BOW",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Barbara",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CATALYST",
+        "vision": "HYDRO"
+      },
+      {
+        "name": "Beidou",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "ELECTRO"
+      },
+      {
+        "name": "Bennett",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "SWORD",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Candace",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "POLEARM",
+        "vision": "HYDRO"
+      },
+      {
+        "name": "Charlotte",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CATALYST",
+        "vision": "CRYO"
+      },
+      {
+        "name": "Chevreuse",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "POLEARM",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Chongyun",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "CRYO"
+      },
+      {
+        "name": "Collei",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "BOW",
+        "vision": "DENDRO"
+      },
+      {
+        "name": "Dehya",
+        "type": "character",
+        "rarity": 5,
+        "weapon": "CLAYMORE",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Diluc",
+        "type": "character",
+        "rarity": 5,
+        "weapon": "CLAYMORE",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Diona",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "BOW",
+        "vision": "CRYO"
+      },
+      {
+        "name": "Dori",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "ELECTRO"
+      },
+      {
+        "name": "Faruzan",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "BOW",
+        "vision": "ANEMO"
+      },
+      {
+        "name": "Fischl",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "BOW",
+        "vision": "ELECTRO"
+      },
+      {
+        "name": "Freminet",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "CRYO"
+      },
+      {
+        "name": "Gaming",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Gorou",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "BOW",
+        "vision": "GEO"
+      },
+      {
+        "name": "Jean",
+        "type": "character",
+        "rarity": 5,
+        "weapon": "SWORD",
+        "vision": "ANEMO"
+      },
+      {
+        "name": "Kaeya",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "SWORD",
+        "vision": "CRYO"
+      },
+      {
+        "name": "Kaveh",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "DENDRO"
+      },
+      {
+        "name": "Keqing",
+        "type": "character",
+        "rarity": 5,
+        "weapon": "SWORD",
+        "vision": "ELECTRO"
+      },
+      {
+        "name": "Kirara",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "SWORD",
+        "vision": "DENDRO"
+      },
+      {
+        "name": "Kujou Sara",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "BOW",
+        "vision": "ELECTRO"
+      },
+      {
+        "name": "Kuki Shinobu",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "SWORD",
+        "vision": "ELECTRO"
+      },
+      {
+        "name": "Layla",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "SWORD",
+        "vision": "CRYO"
+      },
+      {
+        "name": "Lisa",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CATALYST",
+        "vision": "ELECTRO"
+      },
+      {
+        "name": "Lynette",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "SWORD",
+        "vision": "ANEMO"
+      },
+      {
+        "name": "Mika",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "POLEARM",
+        "vision": "CRYO"
+      },
+      {
+        "name": "Mona",
+        "type": "character",
+        "rarity": 5,
+        "weapon": "CATALYST",
+        "vision": "HYDRO"
+      },
+      {
+        "name": "Ningguang",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CATALYST",
+        "vision": "GEO"
+      },
+      {
+        "name": "Noelle",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "GEO"
+      },
+      {
+        "name": "Qiqi",
+        "type": "character",
+        "rarity": 5,
+        "weapon": "SWORD",
+        "vision": "CRYO"
+      },
+      {
+        "name": "Razor",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "ELECTRO"
+      },
+      {
+        "name": "Rosaria",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "POLEARM",
+        "vision": "CRYO"
+      },
+      {
+        "name": "Sayu",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "ANEMO"
+      },
+      {
+        "name": "Shikanoin Heizou",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CATALYST",
+        "vision": "ANEMO"
+      },
+      {
+        "name": "Sucrose",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CATALYST",
+        "vision": "ANEMO"
+      },
+      {
+        "name": "Thoma",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "POLEARM",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Tighnari",
+        "type": "character",
+        "rarity": 5,
+        "weapon": "BOW",
+        "vision": "DENDRO"
+      },
+      {
+        "name": "Xiangling",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "POLEARM",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Xingqiu",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "SWORD",
+        "vision": "HYDRO"
+      },
+      {
+        "name": "Xinyan",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CLAYMORE",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Yanfei",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "CATALYST",
+        "vision": "PYRO"
+      },
+      {
+        "name": "Yaoyao",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "POLEARM",
+        "vision": "DENDRO"
+      },
+      {
+        "name": "Yun Jin",
+        "type": "character",
+        "rarity": 4,
+        "weapon": "POLEARM",
+        "vision": "GEO"
+      },
+      {
+        "name": "Black Tassel",
+        "rarity": 3,
+        "weapon_type": "POLEARM",
+        "type": "weapon"
+      },
+      {
+        "name": "Bloodtainted Greatsword",
+        "rarity": 3,
+        "weapon_type": "CLAYMORE",
+        "type": "weapon"
+      },
+      {
+        "name": "Cool Steel",
+        "rarity": 3,
+        "weapon_type": "SWORD",
+        "type": "weapon"
+      },
+      {
+        "name": "Debate Club",
+        "rarity": 3,
+        "weapon_type": "CLAYMORE",
+        "type": "weapon"
+      },
+      {
+        "name": "Dragon's Bane",
+        "rarity": 4,
+        "weapon_type": "POLEARM",
+        "type": "weapon"
+      },
+      {
+        "name": "Emerald Orb",
+        "rarity": 3,
+        "weapon_type": "CATALYST",
+        "type": "weapon"
+      },
+      {
+        "name": "Eye of Perception",
+        "rarity": 4,
+        "weapon_type": "CATALYST",
+        "type": "weapon"
+      },
+      {
+        "name": "Favonius Codex",
+        "rarity": 4,
+        "weapon_type": "CATALYST",
+        "type": "weapon"
+      },
+      {
+        "name": "Favonius Greatsword",
+        "rarity": 4,
+        "weapon_type": "CLAYMORE",
+        "type": "weapon"
+      },
+      {
+        "name": "Favonius Lance",
+        "rarity": 4,
+        "weapon_type": "POLEARM",
+        "type": "weapon"
+      },
+      {
+        "name": "Favonius Sword",
+        "rarity": 4,
+        "weapon_type": "SWORD",
+        "type": "weapon"
+      },
+      {
+        "name": "Favonius Warbow",
+        "rarity": 4,
+        "weapon_type": "BOW",
+        "type": "weapon"
+      },
+      {
+        "name": "Ferrous Shadow",
+        "rarity": 3,
+        "weapon_type": "CLAYMORE",
+        "type": "weapon"
+      },
+      {
+        "name": "Harbinger of Dawn",
+        "rarity": 3,
+        "weapon_type": "SWORD",
+        "type": "weapon"
+      },
+      {
+        "name": "Lion's Roar",
+        "rarity": 4,
+        "weapon_type": "SWORD",
+        "type": "weapon"
+      },
+      {
+        "name": "Magic Guide",
+        "rarity": 3,
+        "weapon_type": "CATALYST",
+        "type": "weapon"
+      },
+      {
+        "name": "Rainslasher",
+        "rarity": 4,
+        "weapon_type": "CLAYMORE",
+        "type": "weapon"
+      },
+      {
+        "name": "Raven Bow",
+        "rarity": 3,
+        "weapon_type": "BOW",
+        "type": "weapon"
+      },
+      {
+        "name": "Rust",
+        "rarity": 4,
+        "weapon_type": "BOW",
+        "type": "weapon"
+      },
+      {
+        "name": "Sacrificial Bow",
+        "rarity": 4,
+        "weapon_type": "BOW",
+        "type": "weapon"
+      },
+      {
+        "name": "Sacrificial Fragments",
+        "rarity": 4,
+        "weapon_type": "CATALYST",
+        "type": "weapon"
+      },
+      {
+        "name": "Sacrificial Greatsword",
+        "rarity": 4,
+        "weapon_type": "CLAYMORE",
+        "type": "weapon"
+      },
+      {
+        "name": "Sacrificial Sword",
+        "rarity": 4,
+        "weapon_type": "SWORD",
+        "type": "weapon"
+      },
+      {
+        "name": "Sharpshooter's Oath",
+        "rarity": 3,
+        "weapon_type": "BOW",
+        "type": "weapon"
+      },
+      {
+        "name": "Skyrider Sword",
+        "rarity": 3,
+        "weapon_type": "SWORD",
+        "type": "weapon"
+      },
+      {
+        "name": "Slingshot",
+        "rarity": 3,
+        "weapon_type": "BOW",
+        "type": "weapon"
+      },
+      {
+        "name": "The Bell",
+        "rarity": 4,
+        "weapon_type": "CLAYMORE",
+        "type": "weapon"
+      },
+      {
+        "name": "The Flute",
+        "rarity": 4,
+        "weapon_type": "SWORD",
+        "type": "weapon"
+      },
+      {
+        "name": "The Stringless",
+        "rarity": 4,
+        "weapon_type": "BOW",
+        "type": "weapon"
+      },
+      {
+        "name": "The Widsith",
+        "rarity": 4,
+        "weapon_type": "CATALYST",
+        "type": "weapon"
+      },
+      {
+        "name": "Thrilling Tales of Dragon Slayers",
+        "rarity": 3,
+        "weapon_type": "CATALYST",
+        "type": "weapon"
+      }
+    ]
+  }
