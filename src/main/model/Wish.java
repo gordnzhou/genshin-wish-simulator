@@ -1,7 +1,10 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 // represents a wish, with a name and rarity
-public abstract class Wish {
+public abstract class Wish implements Writable {
     private final int rarity;
     private final String name;
 
@@ -10,6 +13,14 @@ public abstract class Wish {
     public Wish(int rarity, String name) {
         this.rarity = rarity;
         this.name = name;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("rarity", rarity);
+        return json;
     }
 
     public int getRarity() {

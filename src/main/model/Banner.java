@@ -1,11 +1,15 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 // represents a standard banner that users can wish from
-public class Banner {
+public class Banner implements Writable {
     // for random percentage calculation
     public static final int ACCURACY = 100000;
 
@@ -20,6 +24,7 @@ public class Banner {
     private String name;
     private Random random;
 
+    private List<Wish> wishPool;
     private List<Wish> fiveStars;
     private List<Wish> fourStars;
     private List<Wish> threeStars;
@@ -34,11 +39,12 @@ public class Banner {
         this.fourStarPity = 0;
         this.fiveStarPity = 0;
         this.name = name;
-
         this.random = new Random();
         this.fiveStars = new ArrayList<>();
         this.fourStars = new ArrayList<>();
         this.threeStars = new ArrayList<>();
+        this.wishPool = wishPool;
+
         for (Wish wish : wishPool) {
             if (wish.getRarity() == 5) {
                 fiveStars.add(wish);
@@ -48,6 +54,25 @@ public class Banner {
                 threeStars.add(wish);
             }
         }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("wish_pool", wishesToJson());
+        return json;
+    }
+
+    // EFFECTS: returns this banner's wish pool as a JSON array
+    private JSONArray wishesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Wish w : wishPool) {
+            jsonArray.put(w.toJson());
+        }
+
+        return jsonArray;
     }
 
     // REQUIRES: fourStars, fivesStars, threeStars are all non-empty
@@ -100,7 +125,7 @@ public class Banner {
     // REQUIRES: fourStars is non-empty
     // MODIFIES: this
     // EFFECTS: gets a random wish from fourStars and sets fourStarPity to 0
-    private Wish randomFourStar() {
+    protected Wish randomFourStar() {
         fourStarPity = 0;
         int index = random.nextInt(fourStars.size());
         return fourStars.get(index);
@@ -109,7 +134,7 @@ public class Banner {
     // REQUIRES: fiveStars is non-empty
     // MODIFIES: this
     // EFFECTS: gets a random wish from fiveStars and sets fiveStarPity to 0
-    private Wish randomFiveStar() {
+    protected Wish randomFiveStar() {
         fiveStarPity = 0;
         int index = random.nextInt(fiveStars.size());
         return fiveStars.get(index);

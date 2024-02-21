@@ -1,35 +1,34 @@
 package model;
 
-import model.Weapon.WeaponType;
+import org.json.JSONObject;
 
 // represents a wish of type character
 public class Character extends Wish {
-    public enum Element {
-        ANEMO,
-        CRYO,
-        DENDRO,
-        ELECTRO,
-        GEO,
-        HYDRO,
-        PYRO
-    }
 
     private Element vision;
-    private WeaponType preferredWeapon;
+    private WeaponType weapon;
 
     // REQUIRES: rarity must be in the interval [3, 5]
     // EFFECTS: instantiates a character with given name, rarity and preferred weapon
-    public Character(int rarity, String name, Element vision, WeaponType preferredWeapon) {
+    public Character(int rarity, String name, Element vision, WeaponType weapon) {
         super(rarity, name);
         this.vision = vision;
-        this.preferredWeapon = preferredWeapon;
+        this.weapon = weapon;
     }
 
     public Element getVision() {
         return vision;
     }
 
-    public WeaponType getPreferredWeapon() {
-        return preferredWeapon;
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = super.toJson();
+        json.put("vision", vision);
+        json.put("type", "character");
+        return json;
+    }
+
+    public WeaponType getWeapon() {
+        return weapon;
     }
 }

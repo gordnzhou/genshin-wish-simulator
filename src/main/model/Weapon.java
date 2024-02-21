@@ -1,14 +1,9 @@
 package model;
 
+import org.json.JSONObject;
+
 // represents a wish of type weapon
 public class Weapon extends Wish {
-    public enum WeaponType {
-        BOW,
-        CATALYST,
-        GREATSWORD,
-        POLEARM,
-        SWORD,
-    }
 
     private WeaponType weaponType;
 
@@ -18,6 +13,14 @@ public class Weapon extends Wish {
     public Weapon(int rarity, String name, WeaponType weaponType) {
         super(rarity, name);
         this.weaponType = weaponType;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = super.toJson();
+        json.put("weapon_type", weaponType);
+        json.put("type", "weapon");
+        return json;
     }
 
     public WeaponType getWeaponType() {

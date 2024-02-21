@@ -1,6 +1,4 @@
 package model;
-import model.Weapon.WeaponType;
-import model.Character.Element;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,13 +27,13 @@ class BannerTest {
         testBannerC = new Banner("Banner C", wishPool);
 
         wishPoolW = new ArrayList<>();
-        wishPoolW.add(new Weapon(3, "Sword", Weapon.WeaponType.SWORD));
+        wishPoolW.add(new Weapon(3, "Sword", WeaponType.SWORD));
         testBannerW = new Banner("Banner W", wishPoolW);
 
         wishPoolA = new ArrayList<>();
         wishPoolA.add(new Character(5, "Jean", Element.ANEMO, WeaponType.SWORD));
         wishPoolA.add(new Character(4, "Amber", Element.PYRO, WeaponType.BOW));
-        wishPoolA.add(new Weapon(3, "Sword", Weapon.WeaponType.SWORD));
+        wishPoolA.add(new Weapon(3, "Sword", WeaponType.SWORD));
         testBannerA = new Banner("Banner A", wishPoolA);
 
         wishPoolB = new ArrayList<>();
@@ -43,10 +41,10 @@ class BannerTest {
         wishPoolB.add(new Character(5, "Diluc", Element.PYRO, WeaponType.GREATSWORD));
         wishPoolB.add(new Character(4, "Lisa", Element.ELECTRO, WeaponType.CATALYST));
         wishPoolB.add(new Character(4, "Kaeya", Element.CRYO, WeaponType.SWORD));
-        wishPoolB.add(new Weapon(3, "aa", Weapon.WeaponType.GREATSWORD));
-        wishPoolB.add(new Weapon(3, "bb", Weapon.WeaponType.POLEARM));
-        wishPoolB.add(new Weapon(3, "cc", Weapon.WeaponType.BOW));
-        wishPoolB.add(new Weapon(5, "dd", Weapon.WeaponType.CATALYST));
+        wishPoolB.add(new Weapon(3, "aa", WeaponType.GREATSWORD));
+        wishPoolB.add(new Weapon(3, "bb", WeaponType.POLEARM));
+        wishPoolB.add(new Weapon(3, "cc", WeaponType.BOW));
+        wishPoolB.add(new Weapon(5, "dd", WeaponType.CATALYST));
         testBannerB = new Banner("Banner B", wishPoolB);
     }
 
@@ -101,7 +99,7 @@ class BannerTest {
 
             if (wish instanceof Character) {
                 assertTrue(((Character) wish).getVision() != null);
-                assertTrue(((Character) wish).getPreferredWeapon() != null);
+                assertTrue(((Character) wish).getWeapon() != null);
             } else {
                 assertTrue(((Weapon) wish).getWeaponType() != null);
             }
