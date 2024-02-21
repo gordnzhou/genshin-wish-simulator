@@ -11,15 +11,6 @@
     ],
     [
         {
-            "name": "Cool Steel",
-            "weapon_type": "SWORD",
-            "type": "weapon",
-            "rarity": 3
-        },
-        1
-    ],
-    [
-        {
             "vision": "ANEMO",
             "weapon": "SWORD",
             "name": "Jean",
@@ -27,5 +18,14 @@
             "rarity": 5
         },
         10
+    ],
+    [
+        {
+            "name": "Cool Steel",
+            "weapon_type": "SWORD",
+            "type": "weapon",
+            "rarity": 3
+        },
+        1
     ]
 ]}

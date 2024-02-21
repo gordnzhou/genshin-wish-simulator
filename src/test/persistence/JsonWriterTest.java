@@ -1,5 +1,4 @@
 package persistence;
-
 import model.*;
 
 import model.Character;
@@ -57,19 +56,24 @@ class JsonWriterTest {
             Wish c2 = new Weapon(3, "Cool Steel", WeaponType.SWORD);
             Wish c3 = new Character(5, "Jean", Element.ANEMO, WeaponType.SWORD);
 
-            Banner banner = new Banner("a", new ArrayList<>(List.of(c1, c2, c3)));
+            List<Wish> wishPool = new ArrayList<>(List.of(c1, c2, c3));
+            List<Wish> rateUpFourStars = new ArrayList<>(List.of(c1, c2));
+
+            EventBanner banner = new EventBanner("a", wishPool, c3, rateUpFourStars);
             JsonWriter writer = new JsonWriter(BANNER_JSON);
             writer.open();
             writer.writeBanner(banner);
             writer.close();
 
             JsonReader reader = new JsonReader(BANNER_JSON);
-            banner = reader.readBanner();
+            banner = (EventBanner) reader.readBanner();
             assertEquals(0, banner.getWishCount());
             assertEquals("a", banner.getName());
             assertEquals(1, banner.getThreeStars().size());
             assertEquals(1, banner.getFourStars().size());
             assertEquals(1, banner.getFiveStars().size());
+            assertEquals("Jean", banner.getRateUpFiveStar().getName());
+            assertEquals(2, banner.getRateUpFourStars().size());
         } catch (IOException e) {
             fail("Exception should not have been thrown");
         }

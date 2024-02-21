@@ -1,4 +1,26 @@
 {
+    "rate_up_five_star": {
+        "vision": "ANEMO",
+        "weapon": "SWORD",
+        "name": "Jean",
+        "type": "character",
+        "rarity": 5
+    },
+    "rate_up_four_stars": [
+        {
+            "vision": "PYRO",
+            "weapon": "BOW",
+            "name": "Amber",
+            "type": "character",
+            "rarity": 4
+        },
+        {
+            "name": "Cool Steel",
+            "weapon_type": "SWORD",
+            "type": "weapon",
+            "rarity": 3
+        }
+    ],
     "name": "a",
     "wish_pool": [
         {
