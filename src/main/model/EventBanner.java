@@ -13,7 +13,7 @@ public class EventBanner extends Banner {
     private List<Wish> rateUpFourStars;
 
     private boolean failedFiveStar = false;
-    private boolean failedFourStar = true;
+    private boolean failedFourStar = false;
 
     private Random random;
 
@@ -48,19 +48,23 @@ public class EventBanner extends Banner {
     // EFFECTS: returns a random wish from fiveStars or rateUpFiveStar
     @Override
     protected Wish randomFiveStar() {
+        Wish randFiveStar = super.randomFiveStar();
+
         if (failedFiveStar || random.nextInt(2) % 2 == 0) {
             failedFiveStar = false;
             return rateUpFiveStar;
         }
 
         failedFiveStar = true;
-        return super.randomFiveStar();
+        return randFiveStar;
     }
 
     // MODIFIES: this
     // EFFECTS: gets a random wish from fourStars or a rateUpFourStar
     @Override
     protected Wish randomFourStar() {
+        Wish randFourStar = super.randomFourStar();
+
         if (failedFourStar || random.nextInt(2) % 2 == 0) {
             failedFourStar = false;
             int index = random.nextInt(rateUpFourStars.size());
@@ -68,7 +72,7 @@ public class EventBanner extends Banner {
         }
 
         failedFourStar = true;
-        return super.randomFourStar();
+        return randFourStar;
     }
 
     public Wish getRateUpFiveStar() {

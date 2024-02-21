@@ -18,8 +18,8 @@ public class Weapon extends Wish {
     @Override
     public JSONObject toJson() {
         JSONObject json = super.toJson();
-        json.put("weapon_type", weaponType);
         json.put("type", "weapon");
+        json.put("weapon_type", weaponType);
         return json;
     }
 

@@ -23,8 +23,9 @@ public class Character extends Wish {
     @Override
     public JSONObject toJson() {
         JSONObject json = super.toJson();
-        json.put("vision", vision);
         json.put("type", "character");
+        json.put("vision", vision);
+        json.put("weapon", weapon);
         return json;
     }
 

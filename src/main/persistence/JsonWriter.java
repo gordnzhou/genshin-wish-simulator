@@ -1,7 +1,5 @@
 package persistence;
 
-import model.Wish;
-import model.Banner;
 import org.json.JSONObject;
 
 

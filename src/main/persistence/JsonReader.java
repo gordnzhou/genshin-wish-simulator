@@ -76,7 +76,7 @@ public class JsonReader {
 
         if (jsonObject.getString("type").equals("character")) {
             Element element = Element.valueOf(jsonObject.getString("vision"));
-            WeaponType preferredWeapon = WeaponType.valueOf(jsonObject.getString("preferred_weapon"));
+            WeaponType preferredWeapon = WeaponType.valueOf(jsonObject.getString("weapon"));
             return new Character(rarity, name, element, preferredWeapon);
         } else {
             WeaponType weaponType = WeaponType.valueOf(jsonObject.getString("weapon_type"));

@@ -23,10 +23,10 @@ public class EventBannerTest {
         wishPool.add(new Character(5, "Jean", Element.ANEMO, WeaponType.SWORD));
         wishPool.add(new Character(4, "Amber", Element.PYRO, WeaponType.BOW));
         wishPool.add(new Weapon(3, "Sword", WeaponType.SWORD));
-        wishPool.add(new Character(5, "Diluc", Element.PYRO, WeaponType.GREATSWORD));
+        wishPool.add(new Character(5, "Diluc", Element.PYRO, WeaponType.CLAYMORE));
         wishPool.add(new Character(4, "Lisa", Element.ELECTRO, WeaponType.CATALYST));
         wishPool.add(new Character(4, "Kaeya", Element.CRYO, WeaponType.SWORD));
-        wishPool.add(new Weapon(3, "aa", WeaponType.GREATSWORD));
+        wishPool.add(new Weapon(3, "aa", WeaponType.CLAYMORE));
         wishPool.add(new Weapon(3, "bb", WeaponType.POLEARM));
         wishPool.add(new Weapon(3, "cc", WeaponType.BOW));
         wishPool.add(new Weapon(5, "dd", WeaponType.CATALYST));
@@ -71,12 +71,16 @@ public class EventBannerTest {
     @Test
     void testMakeWishMany() {
         for (int i = 0; i < 1000; i++) {
+            assertEquals(testEventBanner.getWishCount(), i);
+
             Wish wish = testEventBanner.makeWish();
 
             if (wish.equals(rateUpFiveStar)) {
                 assertEquals(testEventBanner.getFailedFiveStar(), false);
+                assertEquals(testEventBanner.getFiveStarPity(), 0);
             } else if (rateUpFourStars.contains(wish)) {
                 assertEquals(testEventBanner.getFailedFourStar(), false);
+                assertEquals(testEventBanner.getFourStarPity(), 0);
             } else {
                 assertTrue(wishPool.contains(wish));
             }

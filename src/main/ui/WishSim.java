@@ -1,59 +1,54 @@
 package ui;
 
-import model.Banner;
+import model.*;
 import model.Character;
-import model.Weapon;
-import model.Wish;
-import model.WeaponType;
-import model.Element;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
 
 // Genshin Wish Simulator
 public class WishSim {
     public static final int PRIMOGEMS_PER_WISH = 160;
+    private static final String STANDARD_BANNER_JSON_PATH = "./data/standard_banner.json";
+    private static final String EVENT_BANNER_JSON_PATH = "./data/event_banner.json";
 
     private Banner banner;
     private Scanner input;
-
-    // change to hashmap in the future
-    private List<Wish> inventory;
+    private Map<Wish, Integer> inventory;
     private int totalWishCount;
     private int primogems;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
     // REQUIRES: primogems >= 0
     // EFFECTS: instantiates WishSim with given primogems and an empty inventory
-    public WishSim(int primogems) {
-        this.inventory = new ArrayList<>();
+    public WishSim(int primogems) throws FileNotFoundException {
+        this.inventory = new HashMap<>();
         this.totalWishCount = 0;
+        jsonReader = new JsonReader(STANDARD_BANNER_JSON_PATH);
         this.primogems = primogems;
     }
 
     // MODIFIES: this
     // EFFECTS: initialize all input and banners and loads in their wish pool
     public void init() {
-        // change to load from a JSON
-        List<Wish> wishPool = new ArrayList<>();
-        wishPool.add(new Character(5, "Jean", Element.ANEMO, WeaponType.SWORD));
-        wishPool.add(new Character(5, "Diluc", Element.PYRO, WeaponType.GREATSWORD));
-        wishPool.add(new Character(5, "Mona", Element.HYDRO, WeaponType.CATALYST));
-        wishPool.add(new Weapon(5, "Aquila Favonia", WeaponType.SWORD));
-        wishPool.add(new Character(4, "Amber", Element.PYRO, WeaponType.BOW));
-        wishPool.add(new Character(4, "Lisa", Element.ELECTRO, WeaponType.CATALYST));
-        wishPool.add(new Character(4, "Kaeya", Element.CRYO, WeaponType.SWORD));
-        wishPool.add(new Character(4, "Xiangling", Element.PYRO, WeaponType.POLEARM));
-        wishPool.add(new Character(4, "Ningguang", Element.GEO, WeaponType.CATALYST));
-        wishPool.add(new Character(4, "Yaoyao", Element.DENDRO, WeaponType.POLEARM));
-        wishPool.add(new Weapon(3, "Harbinger of Dawn", WeaponType.SWORD));
-        wishPool.add(new Weapon(3, "Ferrous Shadow", WeaponType.GREATSWORD));
-        wishPool.add(new Weapon(3, "Black Tassel", WeaponType.POLEARM));
-        wishPool.add(new Weapon(3, "Recurve Bow", WeaponType.BOW));
-        wishPool.add(new Weapon(5, "Magic Guide", WeaponType.CATALYST));
-        banner = new Banner("Banner 1", wishPool);
+        loadBanner();
         input = new Scanner(System.in);
         input.useDelimiter("\n");
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads banner from file
+    private void loadBanner() {
+        try {
+            banner = jsonReader.readBanner();
+            System.out.println("Loaded " + banner.getName() + " from " + STANDARD_BANNER_JSON_PATH);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + STANDARD_BANNER_JSON_PATH);
+        }
     }
 
     // MODIFIES: this
@@ -142,19 +137,20 @@ public class WishSim {
         if (inventory.isEmpty()) {
             System.out.println("Your Inventory is Empty...");
         } else {
-            int i = 1;
             System.out.println("------- INVENTORY -------");
-            for (Wish wish : inventory) {
+            for (Map.Entry<Wish, Integer> entry : inventory.entrySet()) {
+                Wish wish = entry.getKey();
+                int count = entry.getValue();
                 String name = wish.getName();
                 int rarity = wish.getRarity();
                 if (wish instanceof Weapon) {
-                    System.out.format("%d) '%s' (%d stars), Weapon Type: %s\n",
-                            i, name, rarity, ((Weapon) wish).getWeaponType());
+                    System.out.format("- '%s' (%d stars), Weapon Type: %s, Copies: %d\n",
+                            name, rarity, ((Weapon) wish).getWeaponType(), count);
                 } else if (wish instanceof Character) {
-                    System.out.format("%d) '%s' (%d stars), Character Vision: %s, Preferred Weapon: %s\n",
-                            i, name, rarity, ((Character) wish).getVision(), ((Character) wish).getWeapon());
+                    System.out.format("- '%s' (%d stars), Vision: %s, Weapon: %s, Constellation(s): %d\n",
+                            name, rarity, ((Character) wish).getVision(),
+                            ((Character) wish).getWeapon(), Math.min(count, 6));
                 }
-                i++;
             }
         }
     }
@@ -174,8 +170,20 @@ public class WishSim {
         totalWishCount += count;
         primogems -= cost;
 
-        inventory.addAll(wishes);
+        addWishes(wishes);
         displayWishResults(wishes);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: adds all wishes to inventory
+    private void addWishes(List<Wish> wishes) {
+        for (Wish wish : wishes) {
+            if (inventory.containsKey(wish)) {
+                inventory.put(wish, inventory.get(wish) + 1);
+            } else {
+                inventory.put(wish, 1);
+            }
+        }
     }
 
     // REQUIRES: wishes is non-empty
@@ -198,7 +206,7 @@ public class WishSim {
         return totalWishCount;
     }
 
-    public List<Wish> getInventory() {
+    public Map<Wish, Integer> getInventory() {
         return inventory;
     }
 

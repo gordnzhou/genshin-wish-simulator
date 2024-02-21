@@ -38,10 +38,10 @@ class BannerTest {
 
         wishPoolB = new ArrayList<>();
         wishPoolB.addAll(wishPoolA);
-        wishPoolB.add(new Character(5, "Diluc", Element.PYRO, WeaponType.GREATSWORD));
+        wishPoolB.add(new Character(5, "Diluc", Element.PYRO, WeaponType.CLAYMORE));
         wishPoolB.add(new Character(4, "Lisa", Element.ELECTRO, WeaponType.CATALYST));
         wishPoolB.add(new Character(4, "Kaeya", Element.CRYO, WeaponType.SWORD));
-        wishPoolB.add(new Weapon(3, "aa", WeaponType.GREATSWORD));
+        wishPoolB.add(new Weapon(3, "aa", WeaponType.CLAYMORE));
         wishPoolB.add(new Weapon(3, "bb", WeaponType.POLEARM));
         wishPoolB.add(new Weapon(3, "cc", WeaponType.BOW));
         wishPoolB.add(new Weapon(5, "dd", WeaponType.CATALYST));
