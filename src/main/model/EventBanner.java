@@ -29,12 +29,12 @@ public class EventBanner extends Banner {
     public JSONObject toJson() {
         JSONObject json = super.toJson();
         json.put("rate_up_five_star", rateUpFiveStar.toJson());
-        json.put("rate_up_four_stars", wishesToJson());
+        json.put("rate_up_four_stars", rateUpFourStarsToJson());
         return json;
     }
 
     // EFFECTS: returns this event banner's rate up four stars as a JSON array
-    private JSONArray wishesToJson() {
+    private JSONArray rateUpFourStarsToJson() {
         JSONArray jsonArray = new JSONArray();
 
         for (Wish w : rateUpFourStars) {
@@ -45,7 +45,7 @@ public class EventBanner extends Banner {
     }
 
     // MODIFIES: this
-    // EFFECTS: returns a random wish from fiveStars or rateUpFiveStar
+    // EFFECTS: returns a random wish from fiveStars OR rateUpFiveStar
     @Override
     protected Wish randomFiveStar() {
         Wish randFiveStar = super.randomFiveStar();
@@ -60,7 +60,7 @@ public class EventBanner extends Banner {
     }
 
     // MODIFIES: this
-    // EFFECTS: gets a random wish from fourStars or a rateUpFourStar
+    // EFFECTS: gets a random wish from fourStars OR a rateUpFourStar
     @Override
     protected Wish randomFourStar() {
         Wish randFourStar = super.randomFourStar();

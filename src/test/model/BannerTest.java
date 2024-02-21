@@ -8,28 +8,17 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class BannerTest {
     private Banner testBannerA;
     private Banner testBannerB;
-    private Banner testBannerC;
-    private Banner testBannerW;
 
     private List<Wish> wishPoolA;
     private List<Wish> wishPoolB;
-    private List<Wish> wishPool;
-    private List<Wish> wishPoolW;
 
     @BeforeEach
     void runBefore() {
-        wishPool = new ArrayList<>();
-        wishPool.add(new Character(4, "Amber", Element.PYRO, WeaponType.BOW));
-        testBannerC = new Banner("Banner C", wishPool);
-
-        wishPoolW = new ArrayList<>();
-        wishPoolW.add(new Weapon(3, "Sword", WeaponType.SWORD));
-        testBannerW = new Banner("Banner W", wishPoolW);
-
         wishPoolA = new ArrayList<>();
         wishPoolA.add(new Character(5, "Jean", Element.ANEMO, WeaponType.SWORD));
         wishPoolA.add(new Character(4, "Amber", Element.PYRO, WeaponType.BOW));
@@ -98,10 +87,10 @@ class BannerTest {
             }
 
             if (wish instanceof Character) {
-                assertTrue(((Character) wish).getVision() != null);
-                assertTrue(((Character) wish).getWeapon() != null);
+                assertNotNull(((Character) wish).getVision());
+                assertNotNull(((Character) wish).getWeapon());
             } else {
-                assertTrue(((Weapon) wish).getWeaponType() != null);
+                assertNotNull(((Weapon) wish).getWeaponType());
             }
         }
     }

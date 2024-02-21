@@ -18,15 +18,17 @@ public class WishSim {
 
     private Banner banner;
     private Banner eventBanner;
-    private Scanner input;
     private Map<Wish, Integer> inventory;
     private int totalWishCount;
     private int primogems;
+
+    private Scanner input;
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
 
     // REQUIRES: primogems >= 0
-    // EFFECTS: instantiates WishSim with given primogems and an empty inventory
+    // EFFECTS: instantiates WishSim with given primogems and an empty inventory;
+    //          throws FileNotFoundException if JSON_STORE cannot be opened for writing
     public WishSim(int primogems) throws FileNotFoundException {
         this.inventory = new HashMap<>();
         this.totalWishCount = 0;
@@ -36,7 +38,7 @@ public class WishSim {
     }
 
     // MODIFIES: this
-    // EFFECTS: initialize all input and banners and loads in their wish pool
+    // EFFECTS: initialize input and loads in banner data
     public void init() {
         banner = loadBannerFromPath(STANDARD_BANNER_JSON_PATH);
         eventBanner = loadBannerFromPath(EVENT_BANNER_JSON_PATH);
@@ -61,6 +63,7 @@ public class WishSim {
         System.out.println("Ok bye");
     }
 
+    // REQUIRES: path is a valid path to a json file
     // EFFECTS: loads banners from the JSON file at the given path and returns it
     private Banner loadBannerFromPath(String path) {
         try {
@@ -122,7 +125,8 @@ public class WishSim {
         }
     }
 
-    // EFFECTS: saves the inventory to file
+    // MODIFIES: this
+    // EFFECTS: saves current inventory to file as JSON
     private void saveInventory() {
         try {
             jsonWriter.open();
@@ -141,6 +145,7 @@ public class WishSim {
             System.out.println("Enter a positive amount: ");
             int amount = input.nextInt();
             input.nextLine();
+
             if (amount <= 0) {
                 System.out.println("Cannot enter a negative/zero amount.");
             } else {
@@ -149,12 +154,15 @@ public class WishSim {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: repeatedly prompts user to select either banner or eventBanner
     private Banner askForBanner() {
         while (true) {
             System.out.format("Enter '0' to wish from standard banner: '%s', '1' for current Event Banner: '%s'\n",
                     banner.getName(), eventBanner.getName());
             int response = input.nextInt();
             input.nextLine();
+
             if (response == 0) {
                 return banner;
             } else if (response == 1) {
@@ -211,8 +219,8 @@ public class WishSim {
 
     // REQUIRES: count > 0
     // MODIFIES: this
-    // EFFECTS: if user has enough primogems, makes wish(es) from banner, adds them all to inventory
-    //          and prints the results; otherwise do nothing
+    // EFFECTS: if user has enough primogems, makes wish(es) from the chosen banner,
+    //          adds them all to inventory and prints the results; otherwise do nothing
     public void makeWish(Banner banner, int count) {
         int cost = PRIMOGEMS_PER_WISH * count;
         if (primogems < cost) {
@@ -243,9 +251,8 @@ public class WishSim {
     }
 
     // REQUIRES: wishes is non-empty
-    // EFFECTS: prints wish results
+    // EFFECTS: prints wish results with numbering based on current five-star pity
     private void displayWishResults(List<Wish> wishes, int start) {
-        // numbering based on five-star pity for the given banner
         int i = start + 1;
         for (Wish wish : wishes) {
             if (wish.getRarity() == 5) {

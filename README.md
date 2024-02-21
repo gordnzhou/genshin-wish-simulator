@@ -19,4 +19,6 @@ bring that excitement to a broader audience.
 - I want to add and spend currency used for making wishes
 - I want to be able to view information about each character/weapon 
 - (ex. name, element, weapon type)
-- I want
+- I would like an option to load in my previous wishes
+- I would like an option to save my current wishes 
+- I want to be able to wish from different types of banners

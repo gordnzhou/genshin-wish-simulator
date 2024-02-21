@@ -16,10 +16,6 @@ public class Character extends Wish {
         this.weapon = weapon;
     }
 
-    public Element getVision() {
-        return vision;
-    }
-
     @Override
     public JSONObject toJson() {
         JSONObject json = super.toJson();
@@ -27,6 +23,10 @@ public class Character extends Wish {
         json.put("vision", vision);
         json.put("weapon", weapon);
         return json;
+    }
+
+    public Element getVision() {
+        return vision;
     }
 
     public WeaponType getWeapon() {

@@ -60,16 +60,16 @@ public class Banner implements Writable {
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         json.put("name", name);
-        json.put("wish_pool", wishesToJson());
+        json.put("wish_pool", wishPoolToJson());
         return json;
     }
 
     // EFFECTS: returns this banner's wish pool as a JSON array
-    private JSONArray wishesToJson() {
+    private JSONArray wishPoolToJson() {
         JSONArray jsonArray = new JSONArray();
 
-        for (Wish w : wishPool) {
-            jsonArray.put(w.toJson());
+        for (Wish wish : wishPool) {
+            jsonArray.put(wish.toJson());
         }
 
         return jsonArray;

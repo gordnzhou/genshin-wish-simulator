@@ -1,6 +1,5 @@
 package persistence;
 
-import model.Character;
 import org.junit.jupiter.api.Test;
 
 import model.*;
@@ -11,9 +10,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class JsonReaderTest {
-    private static final String TEST_INVENTORY_PATH = "./data/test_data/test_inventory.json";
-    private static final String TEST_EMPTY_INVENTORY_PATH = "./data/test_data/test_empty_inventory.json";
-    private static final String TEST_BANNER_PATH = "./data/test_data/test_banner.json";
+    private static final String INVENTORY_JSON = "./data/test_data/test_inventory.json";
+    private static final String EMPTY_INVENTORY_JSON = "./data/test_data/test_empty_inventory.json";
+    private static final String BANNER_JSON = "./data/test_data/test_banner.json";
+    private static final String EMPTY_BANNER_JSON = "./data/test_data/test_empty_banner.json";
 
     @Test
     void testReaderNonExistentFile() {
@@ -28,8 +28,22 @@ class JsonReaderTest {
     }
 
     @Test
+    void testReaderEmptyBanner() {
+        JsonReader reader = new JsonReader(EMPTY_BANNER_JSON);
+        try {
+            Banner banner = reader.readBanner();
+            assertEquals(0, banner.getWishCount());
+            assertEquals("Empty", banner.getName());
+            assertEquals(0, banner.getThreeStars().size() +
+                    banner.getFourStars().size() + banner.getFiveStars().size());
+        } catch (IOException e) {
+            fail("Couldn't read from file");
+        }
+    }
+
+    @Test
     void testReaderBanner() {
-        JsonReader reader = new JsonReader(TEST_BANNER_PATH);
+        JsonReader reader = new JsonReader(BANNER_JSON);
         try {
             EventBanner banner = (EventBanner) reader.readBanner();
             assertEquals(0, banner.getWishCount());
@@ -46,7 +60,7 @@ class JsonReaderTest {
 
     @Test
     void testReaderEmptyInventory() {
-        JsonReader reader = new JsonReader(TEST_EMPTY_INVENTORY_PATH);
+        JsonReader reader = new JsonReader(EMPTY_INVENTORY_JSON);
         try {
             Map<Wish, Integer> inventory = reader.readInventory();
             assertEquals(0, inventory.size());
@@ -57,7 +71,7 @@ class JsonReaderTest {
 
     @Test
     void testReaderGeneralInventory() {
-        JsonReader reader = new JsonReader(TEST_INVENTORY_PATH);
+        JsonReader reader = new JsonReader(INVENTORY_JSON);
         try {
             Map<Wish, Integer> inventory = reader.readInventory();
             assertEquals(3, inventory.size());

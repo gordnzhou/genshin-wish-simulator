@@ -1,5 +1,6 @@
-{"data": [
-    [
+{
+    "name": "a",
+    "wish_pool": [
         {
             "vision": "PYRO",
             "weapon": "BOW",
@@ -7,25 +8,18 @@
             "type": "character",
             "rarity": 4
         },
-        2
-    ],
-    [
         {
             "name": "Cool Steel",
             "weapon_type": "SWORD",
             "type": "weapon",
             "rarity": 3
         },
-        1
-    ],
-    [
         {
             "vision": "ANEMO",
             "weapon": "SWORD",
             "name": "Jean",
             "type": "character",
             "rarity": 5
-        },
-        10
+        }
     ]
-]}
+}

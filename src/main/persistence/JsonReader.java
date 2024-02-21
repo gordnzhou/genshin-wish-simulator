@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import model.Character;
 import org.json.*;
 
-// Represents a reader that reads workroom from JSON data stored in file
+// Represents a reader that reads banner and inventory from JSON data stored in file
 // credits: https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
 public class JsonReader {
     private String source;
@@ -30,6 +30,7 @@ public class JsonReader {
     public Banner readBanner() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
+
         return parseBanner(jsonObject);
     }
 
@@ -38,13 +39,19 @@ public class JsonReader {
     public Map<Wish, Integer> readInventory() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
+
         JSONArray data = jsonObject.getJSONArray("data");
+
         Map<Wish, Integer> inventory = new HashMap<>();
 
+        // inventory is read from JSON as an array of 2-long arrays
+        // with key as 1st element and its corresponding value as 2nd
         for (Object item : data) {
             JSONArray jsonArray = (JSONArray) item;
+
             Wish wish = parseWish(jsonArray.getJSONObject(0));
             int count = jsonArray.getInt(1);
+
             inventory.put(wish, count);
         }
 
@@ -96,10 +103,12 @@ public class JsonReader {
 
         if (jsonObject.getString("type").equals("character")) {
             Element element = Element.valueOf(jsonObject.getString("vision"));
-            WeaponType preferredWeapon = WeaponType.valueOf(jsonObject.getString("weapon"));
-            return new Character(rarity, name, element, preferredWeapon);
+            WeaponType weapon = WeaponType.valueOf(jsonObject.getString("weapon"));
+
+            return new Character(rarity, name, element, weapon);
         } else {
             WeaponType weaponType = WeaponType.valueOf(jsonObject.getString("weapon_type"));
+
             return new Weapon(rarity, name, weaponType);
         }
     }
