@@ -1,6 +1,6 @@
 package ui;
 
-import model.Banner;
+import model.banner.Banner;
 import static ui.WishSim.PRIMOGEMS_PER_WISH;
 
 import org.junit.jupiter.api.BeforeEach;

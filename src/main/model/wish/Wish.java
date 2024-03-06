@@ -1,7 +1,9 @@
-package model;
+package model.wish;
 
 import org.json.JSONObject;
 import persistence.Writable;
+
+import java.util.Objects;
 
 // represents a wish, with a name and rarity
 public abstract class Wish implements Writable {
@@ -21,6 +23,23 @@ public abstract class Wish implements Writable {
         json.put("name", name);
         json.put("rarity", rarity);
         return json;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Wish wish = (Wish) o;
+        return rarity == wish.rarity && Objects.equals(name, wish.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rarity, name);
     }
 
     public int getRarity() {

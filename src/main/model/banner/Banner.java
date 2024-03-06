@@ -1,5 +1,6 @@
-package model;
+package model.banner;
 
+import model.wish.Wish;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;

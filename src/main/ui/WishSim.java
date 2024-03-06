@@ -1,7 +1,9 @@
 package ui;
 
-import model.*;
-import model.Character;
+import model.banner.Banner;
+import model.wish.Character;
+import model.wish.Weapon;
+import model.wish.Wish;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 

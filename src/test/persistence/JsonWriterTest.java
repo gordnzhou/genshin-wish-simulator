@@ -1,7 +1,11 @@
 package persistence;
-import model.*;
 
-import model.Character;
+import model.Element;
+import model.WeaponType;
+import model.banner.Banner;
+import model.banner.EventBanner;
+import model.wish.*;
+import model.wish.Character;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -72,7 +76,7 @@ class JsonWriterTest {
             assertEquals(1, banner.getThreeStars().size());
             assertEquals(1, banner.getFourStars().size());
             assertEquals(1, banner.getFiveStars().size());
-            assertEquals("Jean", banner.getRateUpFiveStar().getName());
+            assertEquals(c3, banner.getRateUpFiveStar());
             assertEquals(2, banner.getRateUpFourStars().size());
         } catch (IOException e) {
             fail("Exception should not have been thrown");
@@ -121,11 +125,14 @@ class JsonWriterTest {
                 int count = entry.getValue();
 
                 if (wish.getRarity() == 5) {
-                    assertEquals(count, 10);
+                    assertEquals(10, count);
+                    assertEquals(c3, wish);
                 } else if (wish.getRarity() == 4) {
-                    assertEquals(count, 2);
+                    assertEquals(2, count);
+                    assertEquals(c1, wish);
                 } else if (wish.getRarity() == 3) {
-                    assertEquals(count, 1);
+                    assertEquals(1, count);
+                    assertEquals(c2, wish);
                 }
             }
         } catch (IOException e) {

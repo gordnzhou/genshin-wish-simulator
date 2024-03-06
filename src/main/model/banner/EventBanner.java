@@ -1,5 +1,7 @@
-package model;
+package model.banner;
 
+import model.banner.Banner;
+import model.wish.Wish;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

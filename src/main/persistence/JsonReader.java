@@ -1,7 +1,5 @@
 package persistence;
 
-import model.*;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,7 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import model.Character;
+import model.Element;
+import model.WeaponType;
+import model.banner.Banner;
+import model.banner.EventBanner;
+import model.wish.*;
+import model.wish.Character;
 import org.json.*;
 
 // Represents a reader that reads banner and inventory from JSON data stored in file

@@ -1,5 +1,8 @@
 package model;
 
+import model.banner.EventBanner;
+import model.wish.*;
+import model.wish.Character;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

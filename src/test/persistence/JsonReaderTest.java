@@ -1,8 +1,9 @@
 package persistence;
 
+import model.banner.Banner;
+import model.banner.EventBanner;
+import model.wish.Wish;
 import org.junit.jupiter.api.Test;
-
-import model.*;
 
 import java.io.IOException;
 import java.util.Map;
