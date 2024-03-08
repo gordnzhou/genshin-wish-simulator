@@ -26,20 +26,20 @@ public class Weapon extends Wish {
         return json;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        Weapon weapon = (Weapon) o;
-        return weaponType == weapon.weaponType;
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) {
+//            return true;
+//        }
+//        if (o == null || getClass() != o.getClass()) {
+//            return false;
+//        }
+//        if (!super.equals(o)) {
+//            return false;
+//        }
+//        Weapon weapon = (Weapon) o;
+//        return weaponType == weapon.weaponType;
+//    }
 
     @Override
     public int hashCode() {

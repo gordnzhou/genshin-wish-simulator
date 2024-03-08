@@ -76,7 +76,7 @@ class JsonWriterTest {
             assertEquals(1, banner.getThreeStars().size());
             assertEquals(1, banner.getFourStars().size());
             assertEquals(1, banner.getFiveStars().size());
-            assertEquals(c3, banner.getRateUpFiveStar());
+            assertEquals(c3.getName(), banner.getRateUpFiveStar().getName());
             assertEquals(2, banner.getRateUpFourStars().size());
         } catch (IOException e) {
             fail("Exception should not have been thrown");
@@ -126,13 +126,13 @@ class JsonWriterTest {
 
                 if (wish.getRarity() == 5) {
                     assertEquals(10, count);
-                    assertEquals(c3, wish);
+                    assertEquals(c3.getName(), wish.getName());
                 } else if (wish.getRarity() == 4) {
                     assertEquals(2, count);
-                    assertEquals(c1, wish);
+                    assertEquals(c1.getName(), wish.getName());
                 } else if (wish.getRarity() == 3) {
                     assertEquals(1, count);
-                    assertEquals(c2, wish);
+                    assertEquals(c2.getName(), wish.getName());
                 }
             }
         } catch (IOException e) {

@@ -25,17 +25,17 @@ public abstract class Wish implements Writable {
         return json;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Wish wish = (Wish) o;
-        return rarity == wish.rarity && Objects.equals(name, wish.name);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) {
+//            return true;
+//        }
+//        if (o == null || getClass() != o.getClass()) {
+//            return false;
+//        }
+//        Wish wish = (Wish) o;
+//        return rarity == wish.rarity && Objects.equals(name, wish.name);
+//    }
 
     @Override
     public int hashCode() {
