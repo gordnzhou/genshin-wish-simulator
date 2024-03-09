@@ -30,7 +30,7 @@ public class WishSimTest {
     @Test
     void testConstructor() {
         assertEquals(testWishSim.getTotalWishCount(), 0);
-        assertTrue(testWishSim.getInventory().isEmpty());
+        assertTrue(testWishSim.getInventoryWishes().isEmpty());
         assertEquals(testWishSim.getPrimogems(), 900000);
         assertEquals(testWishSim.getTotalWishCount(), 0);
         assertTrue(testWishSim.getBanner() != null);
@@ -47,7 +47,7 @@ public class WishSimTest {
     @Test
     void testMakeWish() {
         testWishSim.makeWish(testBanner, 1);
-        assertEquals(testWishSim.getInventory().size(), 1);
+        assertEquals(testWishSim.getInventoryWishes().size(), 1);
         assertEquals(testWishSim.getTotalWishCount(), 1);
         assertEquals(testWishSim.getPrimogems(), 900000 - PRIMOGEMS_PER_WISH);
     }
@@ -55,7 +55,7 @@ public class WishSimTest {
     @Test
     void testMakeWishFail() {
         testWishSim.makeWish(testBanner,10000);
-        assertEquals(testWishSim.getInventory().size(), 0);
+        assertEquals(testWishSim.getInventoryWishes().size(), 0);
         assertEquals(testWishSim.getTotalWishCount(), 0);
         assertEquals(testWishSim.getPrimogems(), 900000);
     }

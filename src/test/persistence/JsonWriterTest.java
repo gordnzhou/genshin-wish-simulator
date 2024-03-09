@@ -1,6 +1,7 @@
 package persistence;
 
 import model.Element;
+import model.Inventory;
 import model.WeaponType;
 import model.banner.Banner;
 import model.banner.EventBanner;
@@ -39,7 +40,7 @@ class JsonWriterTest {
             Banner banner = new Banner("Empty", new ArrayList<>());
             JsonWriter writer = new JsonWriter(EMPTY_BANNER_JSON);
             writer.open();
-            writer.writeBanner(banner);
+            writer.writeWritable(banner);
             writer.close();
 
             JsonReader reader = new JsonReader(EMPTY_BANNER_JSON);
@@ -66,7 +67,7 @@ class JsonWriterTest {
             EventBanner banner = new EventBanner("a", wishPool, c3, rateUpFourStars);
             JsonWriter writer = new JsonWriter(BANNER_JSON);
             writer.open();
-            writer.writeBanner(banner);
+            writer.writeWritable(banner);
             writer.close();
 
             JsonReader reader = new JsonReader(BANNER_JSON);
@@ -87,15 +88,15 @@ class JsonWriterTest {
     @Test
     void testWriterEmptyInventory() {
         try {
-            Map<Wish, Integer> inventory = new HashMap<>();
+            Inventory inventory = new Inventory(new HashMap<>(), 0);
             JsonWriter writer = new JsonWriter(EMPTY_INVENTORY_JSON);
             writer.open();
-            writer.writeInventory(inventory);
+            writer.writeWritable(inventory);
             writer.close();
 
             JsonReader reader = new JsonReader(EMPTY_INVENTORY_JSON);
             inventory = reader.readInventory();
-            assertEquals(0, inventory.size());
+            assertEquals(0, inventory.getWishes().size());
         } catch (IOException e) {
             fail("Exception should not have been thrown");
         }
@@ -108,21 +109,22 @@ class JsonWriterTest {
             Wish c2 = new Weapon(3, "Cool Steel", WeaponType.SWORD);
             Wish c3 = new Character(5, "Jean", Element.ANEMO, WeaponType.SWORD);
 
-            Map<Wish, Integer> inventory = new HashMap<>();
-            inventory.put(c1, 2);
-            inventory.put(c2, 1);
-            inventory.put(c3, 10);
+            Map<Wish, Integer> wishes = new HashMap<>();
+            wishes.put(c1, 2);
+            wishes.put(c2, 1);
+            wishes.put(c3, 10);
+            Inventory inventory = new Inventory(wishes, 0);
+
             JsonWriter writer = new JsonWriter(INVENTORY_JSON);
             writer.open();
-            writer.writeInventory(inventory);
+            writer.writeWritable(inventory);
             writer.close();
 
             JsonReader reader = new JsonReader(INVENTORY_JSON);
             inventory = reader.readInventory();
-            assertEquals(3, inventory.size());
-            for (Map.Entry<Wish, Integer> entry : inventory.entrySet()) {
-                Wish wish = entry.getKey();
-                int count = entry.getValue();
+            assertEquals(3, inventory.getWishes().size());
+            for (Wish wish : inventory.getWishes()) {
+                int count = inventory.getWishCopies(wish);
 
                 if (wish.getRarity() == 5) {
                     assertEquals(10, count);

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import model.Element;
+import model.Inventory;
 import model.WeaponType;
 import model.banner.Banner;
 import model.banner.EventBanner;
@@ -39,13 +40,14 @@ public class JsonReader {
 
     // EFFECTS: readers inventory from file and returns it;
     // throws IOException if an error occurs reading data from file
-    public Map<Wish, Integer> readInventory() throws IOException {
+    public Inventory readInventory() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
 
-        JSONArray data = jsonObject.getJSONArray("data");
+        int primogems = jsonObject.getInt("primogems");
+        JSONArray data = jsonObject.getJSONArray("wishes");
 
-        Map<Wish, Integer> inventory = new HashMap<>();
+        Map<Wish, Integer> wishes = new HashMap<>();
 
         // inventory is read from JSON as an array of 2-long arrays
         // with key as 1st element and its corresponding value as 2nd
@@ -55,10 +57,10 @@ public class JsonReader {
             Wish wish = parseWish(jsonArray.getJSONObject(0));
             int count = jsonArray.getInt(1);
 
-            inventory.put(wish, count);
+            wishes.put(wish, count);
         }
 
-        return inventory;
+        return new Inventory(wishes, primogems);
     }
 
     // EFFECTS: reads source file as string and returns it

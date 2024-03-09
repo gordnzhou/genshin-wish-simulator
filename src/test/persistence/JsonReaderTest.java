@@ -1,5 +1,6 @@
 package persistence;
 
+import model.Inventory;
 import model.banner.Banner;
 import model.banner.EventBanner;
 import model.wish.Wish;
@@ -20,8 +21,8 @@ class JsonReaderTest {
     void testReaderNonExistentFile() {
         JsonReader reader = new JsonReader("./data/noSuchFile.json");
         try {
-            Map<Wish, Integer> inventory = reader.readInventory();
-            inventory.clear();
+            Inventory inventory = reader.readInventory();
+            inventory.addPrimogems(1);
             fail("IOException expected");
         } catch (IOException e) {
             // pass
@@ -63,8 +64,8 @@ class JsonReaderTest {
     void testReaderEmptyInventory() {
         JsonReader reader = new JsonReader(EMPTY_INVENTORY_JSON);
         try {
-            Map<Wish, Integer> inventory = reader.readInventory();
-            assertEquals(0, inventory.size());
+            Inventory inventory = reader.readInventory();
+            assertEquals(0, inventory.getWishes().size());
         } catch (IOException e) {
             fail("Couldn't read from file");
         }
@@ -74,11 +75,10 @@ class JsonReaderTest {
     void testReaderGeneralInventory() {
         JsonReader reader = new JsonReader(INVENTORY_JSON);
         try {
-            Map<Wish, Integer> inventory = reader.readInventory();
-            assertEquals(3, inventory.size());
-            for (Map.Entry<Wish, Integer> entry : inventory.entrySet()) {
-                Wish wish = entry.getKey();
-                int count = entry.getValue();
+            Inventory inventory = reader.readInventory();
+            assertEquals(3, inventory.getWishes().size());
+            for (Wish wish : inventory.getWishes()) {
+                int count = inventory.getWishCopies(wish);
 
                 if (wish.getRarity() == 5) {
                     assertEquals(count, 10);

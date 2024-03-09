@@ -1,5 +1,7 @@
 package ui;
 
+import exceptions.NotEnoughPrimosException;
+import model.Inventory;
 import model.banner.Banner;
 import model.wish.Character;
 import model.wish.Weapon;
@@ -20,9 +22,8 @@ public class WishSim {
 
     private Banner banner;
     private Banner eventBanner;
-    private Map<Wish, Integer> inventory;
+    private Inventory inventory;
     private int totalWishCount;
-    private int primogems;
 
     private Scanner input;
     private JsonWriter jsonWriter;
@@ -32,9 +33,8 @@ public class WishSim {
     // EFFECTS: instantiates WishSim with given primogems and an empty inventory;
     //          throws FileNotFoundException if JSON_STORE cannot be opened for writing
     public WishSim(int primogems) throws FileNotFoundException {
-        this.inventory = new HashMap<>();
+        this.inventory = new Inventory(new HashMap<>(), primogems);
         this.totalWishCount = 0;
-        this.primogems = primogems;
         this.jsonReader = new JsonReader(JSON_STORE);
         this.jsonWriter = new JsonWriter(JSON_STORE);
     }
@@ -122,7 +122,6 @@ public class WishSim {
             inventory = jsonReader.readInventory();
             System.out.println("Loaded inventory from " + JSON_STORE);
         } catch (IOException e) {
-            inventory = new HashMap<>();
             System.out.println("Unable to banner read from path: " + JSON_STORE);
         }
     }
@@ -132,7 +131,7 @@ public class WishSim {
     private void saveInventory() {
         try {
             jsonWriter.open();
-            jsonWriter.writeInventory(inventory);
+            jsonWriter.writeWritable(inventory);
             jsonWriter.close();
             System.out.println("Saved inventory to " + JSON_STORE);
         } catch (FileNotFoundException e) {
@@ -177,7 +176,7 @@ public class WishSim {
 
     // EFFECTS: prints out a list of possible commands
     private void displayMenu() {
-        System.out.format("You Currently Have %d Primogems\n", primogems);
+        System.out.format("You Currently Have %d Primogems\n", inventory.getPrimogems());
         System.out.println("----COMMAND LIST----");
         System.out.println("i => View Inventory");
         System.out.println("w => Make Wish");
@@ -193,18 +192,17 @@ public class WishSim {
     // EFFECTS: increments primogems by the given amount and displays a message
     public void addPrimogems(int amount) {
         System.out.format("Successfully Added %d Primogems to Your Inventory.\n", amount);
-        primogems += amount;
+        inventory.addPrimogems(amount);
     }
 
     // EFFECTS: prints a list showing all wishes in current inventory
     private void viewInventory() {
-        if (inventory.isEmpty()) {
+        if (inventory.getWishes().isEmpty()) {
             System.out.println("Your Inventory is Empty...");
         } else {
             System.out.println("------- INVENTORY -------");
-            for (Map.Entry<Wish, Integer> entry : inventory.entrySet()) {
-                Wish wish = entry.getKey();
-                int count = entry.getValue();
+            for (Wish wish : inventory.getWishes()) {
+                int count = inventory.getWishCopies(wish);
                 String name = wish.getName();
                 int rarity = wish.getRarity();
                 if (wish instanceof Weapon) {
@@ -225,7 +223,10 @@ public class WishSim {
     //          adds them all to inventory and prints the results; otherwise do nothing
     public void makeWish(Banner banner, int count) {
         int cost = PRIMOGEMS_PER_WISH * count;
-        if (primogems < cost) {
+
+        try {
+            this.inventory.removePrimogems(cost);
+        } catch (NotEnoughPrimosException e) {
             System.out.println("You do not have enough Primogems!");
             return;
         }
@@ -234,7 +235,6 @@ public class WishSim {
 
         List<Wish> wishes = banner.makeWish(count);
         totalWishCount += count;
-        primogems -= cost;
 
         addWishes(wishes);
         displayWishResults(wishes, start);
@@ -244,11 +244,7 @@ public class WishSim {
     // EFFECTS: adds all wishes to inventory
     private void addWishes(List<Wish> wishes) {
         for (Wish wish : wishes) {
-            if (inventory.containsKey(wish)) {
-                inventory.put(wish, inventory.get(wish) + 1);
-            } else {
-                inventory.put(wish, 1);
-            }
+            inventory.addWish(wish);
         }
     }
 
@@ -273,19 +269,15 @@ public class WishSim {
         return totalWishCount;
     }
 
-    public Map<Wish, Integer> getInventory() {
-        return inventory;
+    public Set<Wish> getInventoryWishes() {
+        return inventory.getWishes();
     }
 
     public Banner getBanner() {
         return banner;
     }
 
-    public Banner getEventBanner() {
-        return eventBanner;
-    }
-
     public int getPrimogems() {
-        return primogems;
+        return inventory.getPrimogems();
     }
 }
