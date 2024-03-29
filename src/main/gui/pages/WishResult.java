@@ -10,7 +10,7 @@ import java.util.List;
 
 public class WishResult extends Page {
 
-    public static final String PAGE_ID = "wishResult";
+    public static final String PAGE_ID = "wishResu;lt";
 
     public WishResult(WishSim wishSim) {
         super(wishSim, PAGE_ID);
@@ -21,11 +21,11 @@ public class WishResult extends Page {
 
     @Override
     public void handleMousePressed() {
-        Page nextPage = super.wishSim.getBannerMenu();
-        super.switchPage(nextPage, new ArrayList<>());
+        super.wishSim.switchToBannerMenu();
     }
 
-    @Override
+    // MODIFIES: this
+    // EFFECTS: displays wishes on screen
     public void onPageSwitch(List<Wish> wishes) {
         int i = 1;
         for (Wish wish : wishes) {

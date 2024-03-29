@@ -1,7 +1,6 @@
 package gui;
 
 import exceptions.NotEnoughPrimosException;
-import gui.components.WishButton;
 import gui.pages.BannerMenu;
 import gui.pages.Page;
 import gui.pages.WishAnimation;
@@ -20,7 +19,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,7 +37,6 @@ public class WishSim extends JFrame {
     private Banner eventBanner;
     private Banner currentBanner;
     private Inventory inventory;
-    private int totalWishCount;
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
 
@@ -58,8 +55,8 @@ public class WishSim extends JFrame {
 
     public WishSim() {
         super("Genshin Wish Simulator");
-        this.initializeDisplay();
         this.initializeFields();
+        this.initializeDisplay();
         this.initializePages();
 
         WishMouseListener wml = new WishMouseListener();
@@ -72,7 +69,7 @@ public class WishSim extends JFrame {
         wishSim = new JPanel(cards);
         setContentPane(wishSim);
 
-        bannerMenu = new BannerMenu(this);
+        bannerMenu = new BannerMenu(this, STARTING_PRIMOGEMS);
         wishAnimation = new WishAnimation(this);
         wishResult = new WishResult(this);
         currentPage = bannerMenu;
@@ -85,7 +82,6 @@ public class WishSim extends JFrame {
         this.eventBanner = loadBannerFromPath(EVENT_BANNER_JSON_PATH);
         this.currentBanner = this.banner;
         this.inventory = new Inventory(new HashMap<>(), STARTING_PRIMOGEMS);
-        this.totalWishCount = 0;
         this.jsonReader = new JsonReader(JSON_STORE);
         this.jsonWriter = new JsonWriter(JSON_STORE);
     }
@@ -129,30 +125,61 @@ public class WishSim extends JFrame {
 
     // MODIFIES: this
     // EFFECTS: if user has enough primogems, makes wish(es) from the chosen banner,
-    //          adds them all to inventory, then returns the wishes.
+    //          adds them all to inventory, then displays the results
     public void makeWish(int count) {
         int cost = PRIMOGEMS_PER_WISH * count;
-
-        try {
-            this.inventory.removePrimogems(cost);
-        } catch (NotEnoughPrimosException e) {
-            e.printStackTrace();
-        }
+        removePrimogems(cost);
 
         List<Wish> wishes = this.currentBanner.makeWish(count);
-        this.totalWishCount += count;
-
         for (Wish wish : wishes) {
             this.inventory.addWish(wish);
         }
 
-        switchPage(wishAnimation, wishes);
+        switchToWishAnimation(wishes);
     }
 
-    public void switchPage(Page nextPage, List<Wish> wishes) {
+    private boolean removePrimogems(int cost) {
+        boolean success = true;
+        try {
+            this.inventory.removePrimogems(cost);
+        } catch (NotEnoughPrimosException e) {
+            // TODO: show popup saying "not enough primogems"!
+            success = false;
+        }
+
+        if (success) {
+            this.bannerMenu.updatePrimogems(this.inventory.getPrimogems());
+        }
+
+        return success;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: sets currentPage to bannerMenu
+    public void switchToBannerMenu() {
+        switchPage(bannerMenu);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: switches currentPage to wishAnimation after
+    //          making a wish in bannerMenu
+    private void switchToWishAnimation(List<Wish> wishes) {
+        switchPage(wishAnimation);
+        wishAnimation.onPageSwitch(wishes);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: switches to wishResult after wishAnimation
+    public void switchToWishResult(List<Wish> wishes) {
+        switchPage(wishResult);
+        wishResult.onPageSwitch(wishes);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: switches page to nextPage and displays it
+    private void switchPage(Page nextPage) {
         currentPage = nextPage;
         cards.show(wishSim, nextPage.getPageId());
-        nextPage.onPageSwitch(wishes);
         repaint();
     }
 
@@ -164,21 +191,5 @@ public class WishSim extends JFrame {
         public void mousePressed(MouseEvent e) {
             handleMousePressed(e);
         }
-    }
-
-    public BannerMenu getBannerMenu() {
-        return bannerMenu;
-    }
-
-    public WishAnimation getWishAnimation() {
-        return wishAnimation;
-    }
-
-    public WishResult getWishResult() {
-        return wishResult;
-    }
-
-    public Page getCurrentPage() {
-        return currentPage;
     }
 }

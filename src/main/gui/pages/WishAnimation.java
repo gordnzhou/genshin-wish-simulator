@@ -21,9 +21,9 @@ public class WishAnimation extends Page {
     private static final String SINGLE_3_WISH_PATH = "data/static/animations/wish-3-single.gif";
 
     public static final int WISH_ANIMATION_MILLIS = 7000;
+    private static final String PAGE_ID = "wishAnimation";
 
     private List<Wish> wishes;
-    private static final String PAGE_ID = "wishAnimation";
     private Thread timeoutThread;
     private JLabel imageLabel;
 
@@ -36,12 +36,12 @@ public class WishAnimation extends Page {
 
     @Override
     public void handleMousePressed() {
-        Page nextPage = super.wishSim.getWishResult();
-        super.switchPage(nextPage, wishes);
+        super.wishSim.switchToWishResult(wishes);
         timeoutThread.stop();
     }
 
-    @Override
+    // MODIFIES: this
+    // EFFECTS: starts wish animation corresponding to wishes
     public void onPageSwitch(List<Wish> wishes) {
         this.wishes = wishes;
         String wishAnimationPath = getWishAnimationPath();
@@ -59,7 +59,8 @@ public class WishAnimation extends Page {
         return result;
     }
 
-    // EFFECTS: returns the file path for the current wish animation
+    // EFFECTS: returns the file path for wishes' corresponding animation
+    //          based on the number of wishes made and the highest rarity wish
     private String getWishAnimationPath() {
         int wishCount = this.wishes.size();
         int maxRarity = this.getMaxRarity();
@@ -84,6 +85,9 @@ public class WishAnimation extends Page {
         return "";
     }
 
+    // MODIFIES: this
+    // EFFECTS: displays GIF from wishAnimationPath; automatically
+    //          switches to wishResult after WISH_ANIMATION_MILLIS has passed
     private void doWishAnimation(String wishAnimationPath) {
         ImageIcon icon = new ImageIcon(wishAnimationPath);
         icon.setImage(icon.getImage().getScaledInstance(WIDTH, HEIGHT, Image.SCALE_DEFAULT));
@@ -97,8 +101,7 @@ public class WishAnimation extends Page {
                 System.out.println("Error Sleeping: " + e.getMessage());
             }
 
-            Page nextPage = super.wishSim.getWishResult();
-            super.switchPage(nextPage, wishes);
+            super.wishSim.switchToWishResult(wishes);
         });
         timeoutThread.start();
     }

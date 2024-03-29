@@ -1,15 +1,14 @@
 package gui.pages;
 
 import gui.WishSim;
+import gui.components.PrimogemCounter;
 import gui.components.WishButton;
-import model.wish.Wish;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import static gui.WishSim.*;
 
@@ -20,34 +19,41 @@ public class BannerMenu extends Page implements ActionListener {
 
     WishButton singleWishButton;
     WishButton multipleWishButton;
+    PrimogemCounter primogemCounter;
 
-    public BannerMenu(WishSim wishSim) {
+    public BannerMenu(WishSim wishSim, int primogems) {
         super(wishSim, PAGE_ID);
         super.page.setLayout(new BorderLayout());
-        displayBannerMenu();
-    }
-
-    @Override
-    public void handleMousePressed() {
-
-    }
-
-    @Override
-    public void onPageSwitch(List<Wish> wishes) {
-
-    }
-
-    // MODIFIES: this
-    // EFFECTS: changes window to display banner menu
-    private void displayBannerMenu() {
         initWishButtons();
-        initBannerButtons();
+        initNorthPanel(primogems);
         initBannerImage();
     }
 
-    private void initBannerButtons() {
+
+    // MODIFIES: this
+    // EFFECTS: initializes JPanel to be displayed at the top
+    private void initNorthPanel(int primogems) {
+        JPanel northPanel = new JPanel();
+        northPanel.setLayout(new BorderLayout());
+        initBannerButtons(northPanel);
+        initPrimogemCounter(northPanel, primogems);
+        super.page.add(northPanel, BorderLayout.NORTH);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes Banner Buttons and adds them to parent
+    private void initPrimogemCounter(JPanel parent, int primogems) {
+        JPanel primogemCounterPanel = new JPanel();
+        primogemCounter = new PrimogemCounter(primogemCounterPanel);
+        primogemCounter.updateCount(primogems);
+        parent.add(primogemCounterPanel, BorderLayout.EAST);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes Banner Buttons and adds them to parent
+    private void initBannerButtons(JPanel parent) {
         JPanel bannerButtonArea = new JPanel();
-        bannerButtonArea.setLayout(new GridLayout(0, 2));
+        bannerButtonArea.setLayout(new GridLayout(1, 2));
         bannerButtonArea.setBorder(new EmptyBorder(0, 40, 10, 40));
         bannerButtonArea.setSize(WIDTH / 2, HEIGHT / 5);
 
@@ -57,7 +63,7 @@ public class BannerMenu extends Page implements ActionListener {
         WishButton standardBannerButton = new WishButton("Standard");
         bannerButtonArea.add(standardBannerButton);
 
-        super.page.add(bannerButtonArea, BorderLayout.NORTH);
+        parent.add(bannerButtonArea, BorderLayout.CENTER);
     }
 
     // MODIFIES: this
@@ -96,5 +102,11 @@ public class BannerMenu extends Page implements ActionListener {
         } else if (e.getSource() == singleWishButton) {
             super.wishSim.makeWish(1);
         }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: updates PrimogemCounter to reflect primogems
+    public void updatePrimogems(int primogems) {
+        primogemCounter.updateCount(primogems);
     }
 }
