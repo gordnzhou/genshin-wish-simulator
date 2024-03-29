@@ -10,12 +10,11 @@ import java.util.List;
 
 public class WishResult extends Page {
 
-    public static final String PAGE_ID = "wishResu;lt";
+    public static final String PAGE_ID = "wishResult";
 
     public WishResult(WishSim wishSim) {
         super(wishSim, PAGE_ID);
         this.wishSim = wishSim;
-        super.page.setBackground(Color.GREEN);
         page.add(new JLabel(PAGE_ID));
     }
 

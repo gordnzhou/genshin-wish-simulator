@@ -1,19 +1,27 @@
 package gui.pages;
 
 import gui.WishSim;
-import model.wish.Wish;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.*;
 
 public abstract class Page {
+    private static final String MENU_BACKGROUND_PATH = "data/static/images/menu_background.png";
+
+    private final String pageId;
+
     protected JPanel page;
     protected WishSim wishSim;
-    private String pageId;
 
     public Page(WishSim wishSim, String pageId) {
-        this.page = new JPanel();
+        this.page = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                ImageIcon background = new ImageIcon(MENU_BACKGROUND_PATH);
+                super.paintComponent(g);
+                g.drawImage(background.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
         this.wishSim = wishSim;
         this.pageId = pageId;
         wishSim.add(page, pageId);
