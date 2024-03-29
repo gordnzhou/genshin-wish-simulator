@@ -214,6 +214,9 @@ public class WishSim extends JFrame {
     // MODIFIES: this
     // EFFECTS: adds primogems to inventory and updates display
     public void addPrimogems(int count) {
+        if ((long)inventory.getPrimogems() + (long) count > Integer.MAX_VALUE) {
+            return;
+        }
         inventory.addPrimogems(count);
         this.bannerMenu.updatePrimogems(inventory.getPrimogems());
     }

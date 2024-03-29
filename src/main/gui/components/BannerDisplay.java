@@ -15,6 +15,7 @@ public class BannerDisplay {
     private JPanel bannerImageArea;
     private JLabel imageLabel;
 
+    /// EFFECTS: Initializes BannerDisplay panel and adds it to parent
     public BannerDisplay(JPanel parent) {
         bannerImageArea = new JPanel();
         bannerImageArea.setOpaque(false);

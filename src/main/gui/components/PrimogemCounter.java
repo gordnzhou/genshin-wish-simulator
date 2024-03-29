@@ -44,26 +44,36 @@ public class PrimogemCounter implements ActionListener {
         primogemsLabel.setText(Integer.toString(primogems));
     }
 
+    // MODIFIES: this, WishSim
+    // EFFECTS: handles adding of primogems to inventory
+    private void handleAddPrimogems() {
+        String input = JOptionPane.showInputDialog("Enter amount of Primogems you would like to purchase.");
+        if (input == null) {
+            return;
+        }
+
+        try {
+            int count = Integer.parseInt(input);
+            if (count > 0) {
+                wishSim.addPrimogems(count);
+
+                String successMessage = "Added " + count + " Primogems to your Inventory";
+                JOptionPane.showMessageDialog(null,
+                        successMessage, "Purchase Success", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+        } catch (NumberFormatException numErr) {
+            numErr.printStackTrace();
+        }
+
+        JOptionPane.showMessageDialog(null,
+                "Invalid Amount Entered!", "Error:", JOptionPane.WARNING_MESSAGE);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addButton) {
-            String input = JOptionPane.showInputDialog("Purchase how many Primogems?");
-
-            try {
-                int count = Integer.parseInt(input);
-                if (count > 0) {
-                    String successMessage = "Added " + count + " Primogems to your Inventory";
-                    JOptionPane.showMessageDialog(null,
-                            successMessage, "Purchase Success", JOptionPane.INFORMATION_MESSAGE);
-                    wishSim.addPrimogems(count);
-                    return;
-                }
-            } catch (NumberFormatException numErr) {
-                System.out.println("Did not enter a Number...");
-            }
-
-            JOptionPane.showMessageDialog(null,
-                    "Invalid Amount Entered!", "Error:", JOptionPane.WARNING_MESSAGE);
+            handleAddPrimogems();
         }
     }
 }

@@ -36,10 +36,12 @@ public class BannerMenu extends Page implements ActionListener {
         initNorthPanel(primogems);
     }
 
+    // MODIFIES: this
+    // EFFECTS: initializes buttons in the left panel
     private void initWestPanel() {
         JPanel westPanel = new JPanel();
         westPanel.setOpaque(false);
-        westPanel.setLayout(new GridLayout(3, 1));
+        westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
 
         inventoryButton = new StyledButton("View Inventory");
         westPanel.add(inventoryButton);
@@ -86,11 +88,11 @@ public class BannerMenu extends Page implements ActionListener {
         bannerButtonArea.setBorder(new EmptyBorder(0, 40, 10, 40));
         bannerButtonArea.setSize(WIDTH / 2, HEIGHT / 5);
 
-        eventBannerButton = new StyledButton("Event");
+        eventBannerButton = new StyledButton("Event Banner");
         bannerButtonArea.add(eventBannerButton);
         eventBannerButton.addActionListener(this);
 
-        standardBannerButton = new StyledButton("Standard");
+        standardBannerButton = new StyledButton("Standard Banner");
         bannerButtonArea.add(standardBannerButton);
         standardBannerButton.addActionListener(this);
 
@@ -117,25 +119,6 @@ public class BannerMenu extends Page implements ActionListener {
         super.page.add(wishButtonArea, BorderLayout.SOUTH);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == multipleWishButton) {
-            super.wishSim.makeWish(10);
-        } else if (e.getSource() == singleWishButton) {
-            super.wishSim.makeWish(1);
-        } else if (e.getSource() == saveButton) {
-            super.wishSim.saveInventory();
-        } else if (e.getSource() == loadButton) {
-            super.wishSim.loadInventory();
-        } else if (e.getSource() == inventoryButton) {
-            super.wishSim.switchToInventoryMenu();
-        } else if (e.getSource() == standardBannerButton) {
-            switchToStandardBanner();
-        } else if (e.getSource() == eventBannerButton) {
-            switchToEventBanner();
-        }
-    }
-
     // MODIFIES: this
     // EFFECTS: updates PrimogemCounter to reflect primogems
     public void updatePrimogems(int primogems) {
@@ -154,5 +137,24 @@ public class BannerMenu extends Page implements ActionListener {
     public void switchToEventBanner() {
         bannerDisplay.switchToEventBanner();
         super.wishSim.switchToEventBanner();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == multipleWishButton) {
+            super.wishSim.makeWish(10);
+        } else if (e.getSource() == singleWishButton) {
+            super.wishSim.makeWish(1);
+        } else if (e.getSource() == saveButton) {
+            super.wishSim.saveInventory();
+        } else if (e.getSource() == loadButton) {
+            super.wishSim.loadInventory();
+        } else if (e.getSource() == inventoryButton) {
+            super.wishSim.switchToInventoryMenu();
+        } else if (e.getSource() == standardBannerButton) {
+            switchToStandardBanner();
+        } else if (e.getSource() == eventBannerButton) {
+            switchToEventBanner();
+        }
     }
 }
