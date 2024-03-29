@@ -72,7 +72,7 @@ public class BannerMenu extends Page implements ActionListener {
     private void initPrimogemCounter(JPanel parent, int primogems) {
         JPanel primogemCounterPanel = new JPanel();
         primogemCounterPanel.setOpaque(false);
-        primogemCounter = new PrimogemCounter(primogemCounterPanel);
+        primogemCounter = new PrimogemCounter(primogemCounterPanel, super.wishSim);
         primogemCounter.updateCount(primogems);
         parent.add(primogemCounterPanel, BorderLayout.EAST);
     }

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class WishSim extends JFrame {
-    private static final int STARTING_PRIMOGEMS = 200000;
+    private static final int STARTING_PRIMOGEMS = 5000;
 
     private static final String JSON_STORE = "./data/inventory.json";
     private static final String STANDARD_BANNER_JSON_PATH = "./data/static/standard_banner.json";
@@ -126,27 +126,31 @@ public class WishSim extends JFrame {
     //          adds them all to inventory, then displays the results
     public void makeWish(int count) {
         int cost = PRIMOGEMS_PER_WISH * count;
-        removePrimogems(cost);
+
+        if (!removePrimogems(cost)) {
+            return;
+        }
 
         List<Wish> wishes = this.currentBanner.makeWish(count);
         for (Wish wish : wishes) {
             this.inventory.addWish(wish);
         }
+        this.bannerMenu.updatePrimogems(this.inventory.getPrimogems());
 
         switchToWishAnimation(wishes);
     }
 
+    // MODIFIES: this
+    // EFFECTS: deducts cost from inventory primogems and returns true;
+    //          if not enough primogems, return false and show error popup
     private boolean removePrimogems(int cost) {
         boolean success = true;
         try {
             this.inventory.removePrimogems(cost);
         } catch (NotEnoughPrimosException e) {
-            // TODO: show popup saying "not enough primogems"!
             success = false;
-        }
-
-        if (success) {
-            this.bannerMenu.updatePrimogems(this.inventory.getPrimogems());
+            JOptionPane.showMessageDialog(null,
+                    "Not enough Primogems in your inventory!", "Warning:", JOptionPane.WARNING_MESSAGE);
         }
 
         return success;
@@ -204,6 +208,14 @@ public class WishSim extends JFrame {
         currentPage = nextPage;
         cards.show(wishSim, nextPage.getPageId());
         repaint();
+    }
+
+    // REQUIRES: count > 0
+    // MODIFIES: this
+    // EFFECTS: adds primogems to inventory and updates display
+    public void addPrimogems(int count) {
+        inventory.addPrimogems(count);
+        this.bannerMenu.updatePrimogems(inventory.getPrimogems());
     }
 
     // MODIFIES: this
