@@ -29,6 +29,9 @@ public class WishResult extends Page {
     public void onPageSwitch(List<Wish> wishes) {
         super.page.removeAll();
         super.page.setLayout(new BoxLayout(super.page, BoxLayout.Y_AXIS));
+        System.out.println(wishes.size());
+        super.page.revalidate();
+        super.page.repaint();
 
         int i = 1;
         for (Wish wish : wishes) {
@@ -46,5 +49,8 @@ public class WishResult extends Page {
             JLabel entryLabel = new JLabel(text);
             super.page.add(entryLabel);
         }
+
+        super.page.revalidate();
+        super.page.repaint();
     }
 }
