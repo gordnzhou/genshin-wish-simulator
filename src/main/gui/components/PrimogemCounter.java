@@ -11,7 +11,7 @@ import static gui.WishSim.loadImageFromPath;
 
 public class PrimogemCounter implements ActionListener {
     private static final String PRIMOGEM_PATH = "data/static/images/primogem.png";
-    private static final double ICON_SCALE = 0.15;
+    private static final double ICON_SCALE = 0.05;
 
     private JPanel panel;
     private JLabel primogemsLabel;
@@ -24,7 +24,7 @@ public class PrimogemCounter implements ActionListener {
         this.wishSim = wishSim;
 
         JLabel iconLabel = new JLabel();
-        loadImageFromPath(iconLabel, PRIMOGEM_PATH, ICON_SCALE);
+        iconLabel.setIcon(loadImageFromPath(PRIMOGEM_PATH, ICON_SCALE));
         this.panel.add(iconLabel);
 
         this.primogemsLabel = new JLabel("0");

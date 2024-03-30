@@ -5,8 +5,10 @@ import model.wish.Wish;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 // represents a limited edition event wish banner
 public class EventBanner extends Banner {
@@ -75,6 +77,14 @@ public class EventBanner extends Banner {
 
         failedFourStar = true;
         return randFourStar;
+    }
+
+    @Override
+    public Set<Wish> getAllWishes() {
+        Set<Wish> allWishes = super.getAllWishes();
+        allWishes.add(rateUpFiveStar);
+        allWishes.addAll(rateUpFourStars);
+        return allWishes;
     }
 
     public Wish getRateUpFiveStar() {

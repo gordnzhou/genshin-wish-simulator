@@ -5,9 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 // represents a standard banner that users can wish from
 public class Banner implements Writable {
@@ -146,6 +144,10 @@ public class Banner implements Writable {
     private Wish randomThreeStar() {
         int index = random.nextInt(threeStars.size());
         return threeStars.get(index);
+    }
+
+    public Set<Wish> getAllWishes() {
+        return new HashSet<>(wishPool);
     }
 
     public List<Wish> getFiveStars() {

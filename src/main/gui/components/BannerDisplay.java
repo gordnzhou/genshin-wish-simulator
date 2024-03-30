@@ -21,7 +21,7 @@ public class BannerDisplay {
         bannerImageArea.setOpaque(false);
         bannerImageArea.setBorder(new EmptyBorder(10, 20, 0, 20));
         imageLabel = new JLabel();
-        loadImageFromPath(imageLabel, EVENT_BANNER_IMAGE_PATH, BANNER_SCALE);
+        imageLabel.setIcon(loadImageFromPath(EVENT_BANNER_IMAGE_PATH, BANNER_SCALE));
         bannerImageArea.add(imageLabel);
         parent.add(bannerImageArea, BorderLayout.CENTER);
     }
@@ -29,14 +29,14 @@ public class BannerDisplay {
     // MODIFIES: this
     // EFFECTS: displays standard banner image
     public void switchToStandardBanner() {
-        loadImageFromPath(imageLabel, STANDARD_BANNER_IMAGE_PATH, BANNER_SCALE);
+        imageLabel.setIcon(loadImageFromPath(STANDARD_BANNER_IMAGE_PATH, BANNER_SCALE));
         imageLabel.repaint();
     }
 
     // MODIFIES: this
     // EFFECTS: displays event banner image
     public void switchToEventBanner() {
-        loadImageFromPath(imageLabel, EVENT_BANNER_IMAGE_PATH, BANNER_SCALE);
+        imageLabel.setIcon(loadImageFromPath(EVENT_BANNER_IMAGE_PATH, BANNER_SCALE));
         imageLabel.repaint();
     }
 }

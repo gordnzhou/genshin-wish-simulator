@@ -28,7 +28,7 @@ public class WishAnimation extends Page {
     private JLabel imageLabel;
 
     public WishAnimation(WishSim wishSim) {
-        super(wishSim, PAGE_ID);
+        super(wishSim, PAGE_ID, MENU_BACKGROUND_PATH);
         super.page.setLayout(new GridLayout(1, 1));
 
         wishes = new ArrayList<>();

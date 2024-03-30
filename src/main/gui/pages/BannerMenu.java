@@ -28,7 +28,7 @@ public class BannerMenu extends Page implements ActionListener {
     StyledButton eventBannerButton;
 
     public BannerMenu(WishSim wishSim, int primogems) {
-        super(wishSim, PAGE_ID);
+        super(wishSim, PAGE_ID, MENU_BACKGROUND_PATH);
         super.page.setLayout(new BorderLayout());
         bannerDisplay = new BannerDisplay(super.page);
         initWishButtons();

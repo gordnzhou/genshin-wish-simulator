@@ -26,7 +26,7 @@ public class InventoryMenu extends Page implements ActionListener {
     private List<InventoryEntry> wishEntries;
 
     public InventoryMenu(WishSim wishSim) {
-        super(wishSim, PAGE_ID);
+        super(wishSim, PAGE_ID, MENU_BACKGROUND_PATH);
         super.page.setLayout(new BorderLayout());
         this.minRarity = 3;
         this.wishEntries = new ArrayList<>();

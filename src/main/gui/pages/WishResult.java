@@ -1,56 +1,225 @@
 package gui.pages;
 
 import gui.WishSim;
+import model.WeaponType;
+import model.wish.Character;
+import model.wish.Weapon;
 import model.wish.Wish;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
+import java.util.*;
 import java.util.List;
 
 import static gui.WishSim.loadImageFromPath;
 
-public class WishResult extends Page {
-
-    private static final String IMG_PATH = "data/static/images/gacha-splash.png";
+public class WishResult extends Page implements ActionListener {
+    private static final String GACHA_SPLASH_PATH = "data/static/images/gacha-splashes/";
+    private static final String WEAPON_BG_PATH = "data/static/images/backgrounds/";
+    private static final String BACKGROUND_IMAGE_PATH = "data/static/images/backgrounds/wish-background.jpeg";
+    private static final double GACHA_SPLASH_SCALE = 0.25;
 
     public static final String PAGE_ID = "wishResult";
 
-    public WishResult(WishSim wishSim) {
-        super(wishSim, PAGE_ID);
+    private Map<String, ImageIcon> imageCache;
+    private Map<WeaponType, ImageIcon> weaponBgCache;
+    private List<Wish> displayWishes;
+
+    private CardLayout wishCards;
+    private JPanel displayPanel;
+    private JButton skipButton;
+    private int currentPanelIndex;
+    private int lastPanelIndex;
+
+    public WishResult(WishSim wishSim, Set<Wish> allWishes) {
+        super(wishSim, PAGE_ID, BACKGROUND_IMAGE_PATH);
         this.wishSim = wishSim;
+        this.imageCache = new HashMap<>();
+        this.weaponBgCache = new HashMap<>();
+        this.displayWishes = new ArrayList<>();
+        this.currentPanelIndex = 0;
+        this.lastPanelIndex = 0;
+        this.loadAllWeaponBgImages();
+        this.loadAllWishImages(allWishes);
+        this.initDisplay();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes GUI display and buttons
+    private void initDisplay() {
+        this.wishCards = new CardLayout();
+        this.displayPanel = new JPanel(this.wishCards);
+        displayPanel.setOpaque(false);
+
+        JPanel skipButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        skipButtonPanel.setOpaque(false);
+        skipButton = new JButton("Skip");
+        skipButton.addActionListener(this);
+        skipButtonPanel.add(skipButton);
+
+        super.page.setLayout(new BorderLayout());
+        super.page.add(displayPanel, BorderLayout.CENTER);
+        super.page.add(skipButtonPanel, BorderLayout.NORTH);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: loads every wish's image file and adds it to imageCache
+    private void loadAllWishImages(Set<Wish> allWishes) {
+        for (Wish wish : allWishes) {
+            String cacheKey = wish.getName();
+            String wishImagePath = GACHA_SPLASH_PATH + wish.getName()
+                    .toLowerCase()
+                    .replaceAll("\\s", "-")
+                    .replaceAll("'", "_") + ".png";
+
+            ImageIcon wishImageIcon;
+            if (wish instanceof Character) {
+                wishImageIcon = loadImageFromPath(wishImagePath, 800, 800);
+            } else {
+                wishImageIcon = loadImageFromPath(wishImagePath, 0.77);
+            }
+
+            System.out.format("Loaded image for %s with width: %d height: %d\n",
+                    cacheKey, wishImageIcon.getIconWidth(), wishImageIcon.getIconHeight());
+            imageCache.put(cacheKey, wishImageIcon);
+        }
+    }
+
+
+    // MODIFIES: this
+    // EFFECTS: loads all weapon background image files to weaponBgCache
+    private void loadAllWeaponBgImages() {
+        for (WeaponType weaponType : WeaponType.values()) {
+            String weaponBgPath = WEAPON_BG_PATH + String.format("bg-%s.png", weaponType.name().toLowerCase());
+            ImageIcon weaponBgIcon = loadImageFromPath(weaponBgPath, 0.7);
+
+            System.out.format("Loaded image for %s with width: %d height: %d\n",
+                    weaponType.name(), weaponBgIcon.getIconWidth(), weaponBgIcon.getIconHeight());
+            weaponBgCache.put(weaponType, weaponBgIcon);
+        }
     }
 
     @Override
     public void handleMousePressed() {
-        super.wishSim.switchToBannerMenu();
+        if (currentPanelIndex == lastPanelIndex) {
+            super.wishSim.switchToBannerMenu();
+        } else {
+            currentPanelIndex += 1;
+            wishCards.next(displayPanel);
+
+            if (currentPanelIndex == lastPanelIndex) {
+                skipButton.setVisible(false);
+            }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (currentPanelIndex == lastPanelIndex) {
+            super.wishSim.switchToBannerMenu();
+        } else {
+            skipButton.setVisible(false);
+            currentPanelIndex = lastPanelIndex;
+            wishCards.last(displayPanel);
+        }
     }
 
     // MODIFIES: this
     // EFFECTS: displays wishes on screen
     public void onPageSwitch(List<Wish> wishes) {
-        super.page.removeAll();
-        super.page.setLayout(new BoxLayout(super.page, BoxLayout.Y_AXIS));
-        System.out.println(wishes.size());
-        super.page.revalidate();
-        super.page.repaint();
+        displayWishes = wishes;
+        displayPanel.removeAll();
+        skipButton.setVisible(wishes.size() != 1);
+        currentPanelIndex = 0;
+        lastPanelIndex = wishes.size() - 1;
 
-        int i = 1;
         for (Wish wish : wishes) {
-            String text = "";
-
-            if (wish.getRarity() == 5) {
-                text = String.format("%d) WOW!! Obtained '%s' (%d stars)!!!\n", i, wish.getName(), wish.getRarity());
-            } else if (wish.getRarity() == 4) {
-                text = String.format("%d) wow! Obtained '%s' (%d stars)!\n", i, wish.getName(), wish.getRarity());
-            } else if (wish.getRarity() == 3) {
-                text = String.format("%d) Obtained '%s' (%d stars)\n", i, wish.getName(), wish.getRarity());
-            }
-            i++;
-
-            JLabel entryLabel = new JLabel(text);
-            super.page.add(entryLabel);
+            addSinglePanel(wish);
         }
 
-        super.page.revalidate();
-        super.page.repaint();
+        if (wishes.size() != 1) {
+            addSummaryPanel();
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates a single panel for the given wish and adds it to the GUI
+    private void addSinglePanel(Wish wish) {
+        JPanel individualWishPanel = gradientPanel(wish.getRarity());
+        individualWishPanel.setOpaque(false);
+        individualWishPanel.setLayout(new GridBagLayout());
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.insets = new Insets(10, 10, 10, 10);
+
+        ImageIcon wishIcon = imageCache.get(wish.getName());
+        JLabel wishLabel = new JLabel(wishIcon);
+        individualWishPanel.add(wishLabel, constraints);
+
+        if (wish instanceof Weapon) {
+            ImageIcon weaponBgIcon = weaponBgCache.get(((Weapon) wish).getWeaponType());
+            JLabel weaponBgLabel = new JLabel(weaponBgIcon);
+            individualWishPanel.add(weaponBgLabel, constraints);
+        }
+
+        displayPanel.add(individualWishPanel, BorderLayout.CENTER);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates a JPanel with circle gradient coloured based on rarity
+    private JPanel gradientPanel(int rarity) {
+        return new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+                float width = getWidth();
+                float height = getHeight();
+
+                Color centerColor = new Color(41, 75, 160);
+                if (rarity == 4) {
+                    centerColor = new Color(106, 53, 175);
+                } else if (rarity == 5) {
+                    centerColor = new Color(255, 216, 118);
+                }
+
+                RadialGradientPaint gradient = new RadialGradientPaint(
+                        new Point2D.Float(width / 2, height / 2),
+                        Math.min(width, height) / (float) 1.9,
+                        new float[]{0.0f, 1.0f},
+                        new Color[]{centerColor, new Color(0, 0, 0, 0)});
+                g2d.setPaint(gradient);
+                g2d.fillRect(0, 0, (int) width, (int) height);
+            }
+        };
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates a summary panel of all wishes and adds it to the GUI
+    private void addSummaryPanel() {
+        JPanel outerPanel = new JPanel();
+        outerPanel.setOpaque(false);
+        outerPanel.setLayout(new BorderLayout());
+
+        JPanel finalDisplayPanel = new JPanel();
+        finalDisplayPanel.setOpaque(false);
+        finalDisplayPanel.setLayout(new GridLayout(1, displayWishes.size()));
+        for (Wish wish : displayWishes) {
+            ImageIcon wishIcon = imageCache.get(wish.getName());
+            int scaledWidth = (int) (wishIcon.getIconWidth() * GACHA_SPLASH_SCALE);
+            int scaledHeight = (int) (wishIcon.getIconHeight() * GACHA_SPLASH_SCALE);
+            Image wishImage = wishIcon.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+            finalDisplayPanel.add(new JLabel(new ImageIcon(wishImage)));
+        }
+
+        outerPanel.add(finalDisplayPanel, BorderLayout.CENTER);
+        displayPanel.add(outerPanel);
+        lastPanelIndex += 1;
     }
 }

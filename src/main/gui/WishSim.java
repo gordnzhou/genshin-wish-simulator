@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class WishSim extends JFrame {
     private static final int STARTING_PRIMOGEMS = 5000;
@@ -31,7 +32,7 @@ public class WishSim extends JFrame {
     public static final int HEIGHT = 800;
     public static final int PRIMOGEMS_PER_WISH = 160;
 
-    private Banner banner;
+    private Banner standardBanner;
     private Banner eventBanner;
     private Banner currentBanner;
     private Inventory inventory;
@@ -62,27 +63,37 @@ public class WishSim extends JFrame {
         setVisible(true);
     }
 
+    // MODIFIES: this
+    // EFFECTS: initializes internal field values
+    private void initializeFields() {
+        this.standardBanner = loadBannerFromPath(STANDARD_BANNER_JSON_PATH);
+        this.eventBanner = loadBannerFromPath(EVENT_BANNER_JSON_PATH);
+        this.currentBanner = this.eventBanner;
+        this.inventory = new Inventory(new HashMap<>(), STARTING_PRIMOGEMS);
+        this.jsonReader = new JsonReader(JSON_STORE);
+        this.jsonWriter = new JsonWriter(JSON_STORE);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes JFrame display elements
+    private void initializeDisplay() {
+        setSize(WIDTH, HEIGHT);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setUndecorated(false);
+    }
+
     private void initializePages() {
         cards = new CardLayout();
         wishSim = new JPanel(cards);
         setContentPane(wishSim);
+        Set<Wish> allWishes = standardBanner.getAllWishes();
+        allWishes.addAll(eventBanner.getAllWishes());
 
         bannerMenu = new BannerMenu(this, STARTING_PRIMOGEMS);
         inventoryMenu = new InventoryMenu(this);
         wishAnimation = new WishAnimation(this);
-        wishResult = new WishResult(this);
+        wishResult = new WishResult(this, allWishes);
         currentPage = bannerMenu;
-    }
-
-    // MODIFIES: this
-    // EFFECTS: initializes internal field values
-    private void initializeFields() {
-        this.banner = loadBannerFromPath(STANDARD_BANNER_JSON_PATH);
-        this.eventBanner = loadBannerFromPath(EVENT_BANNER_JSON_PATH);
-        this.currentBanner = this.banner;
-        this.inventory = new Inventory(new HashMap<>(), STARTING_PRIMOGEMS);
-        this.jsonReader = new JsonReader(JSON_STORE);
-        this.jsonWriter = new JsonWriter(JSON_STORE);
     }
 
     // REQUIRES: path is a valid path to a json file
@@ -96,28 +107,6 @@ public class WishSim extends JFrame {
         } catch (IOException e) {
             System.out.println("Unable to banner read from path: " + path);
             return null;
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: initializes JFrame display elements
-    private void initializeDisplay() {
-        setSize(WIDTH, HEIGHT);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setUndecorated(false);
-    }
-
-    // EFFECTS: loads path's image and scales it; returns a JLabel containing the scaled image
-    // or an empty JLabel if there was an error reading the image
-    public static void loadImageFromPath(JLabel label, String path, double scale) {
-        try {
-            BufferedImage image = ImageIO.read(new File(path));
-            int scaledWidth = (int) (image.getWidth() * scale);
-            int scaledHeight = (int) (image.getHeight() * scale);
-            Image scaledImage = image.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-            label.setIcon(new ImageIcon(scaledImage));
-        } catch (IOException e) {
-            System.out.println("Error Reading Image: " + e.getMessage());
         }
     }
 
@@ -187,10 +176,10 @@ public class WishSim extends JFrame {
     // MODIFIES: this
     // EFFECTS: switches currentBanner to banner
     public void switchToStandardBanner() {
-        if (currentBanner == banner) {
+        if (currentBanner == standardBanner) {
             return;
         }
-        currentBanner = banner;
+        currentBanner = standardBanner;
     }
 
     // MODIFIES: this
@@ -253,6 +242,34 @@ public class WishSim extends JFrame {
     private class WishMouseListener extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
             handleMousePressed(e);
+        }
+    }
+
+    // EFFECTS: loads path's image with given width and height; returns a JLabel containing the scaled image
+    // or an empty JLabel if there was an error reading the image
+    public static ImageIcon loadImageFromPath(String path, int width, int height) {
+        try {
+            BufferedImage image = ImageIO.read(new File(path));
+            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            return new ImageIcon(scaledImage);
+        } catch (IOException e) {
+            System.out.println("Error Reading Image from '" + path + "' : " + e.getMessage());
+            return null;
+        }
+    }
+
+    // EFFECTS: loads path's image and scales it; returns a JLabel containing the scaled image
+    // or an empty JLabel if there was an error reading the image
+    public static ImageIcon loadImageFromPath(String path, double scale) {
+        try {
+            BufferedImage image = ImageIO.read(new File(path));
+            int scaledWidth = (int) (image.getWidth() * scale);
+            int scaledHeight = (int) (image.getHeight() * scale);
+            Image scaledImage = image.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+            return new ImageIcon(scaledImage);
+        } catch (IOException e) {
+            System.out.println("Error Reading Image from '" + path + "' : " + e.getMessage());
+            return null;
         }
     }
 }
