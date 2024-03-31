@@ -17,6 +17,8 @@ import static gui.WishSim.*;
 public class BannerMenu extends Page implements ActionListener {
     private static final String PAGE_ID = "bannerMenu";
 
+    private static final String WISH_LOGO_PATH = "data/static/images/wish-logo.png";
+
     BannerDisplay bannerDisplay;
     WishButton singleWishButton;
     WishButton multipleWishButton;
@@ -31,31 +33,8 @@ public class BannerMenu extends Page implements ActionListener {
         super(wishSim, PAGE_ID, MENU_BACKGROUND_PATH);
         super.page.setLayout(new BorderLayout());
         bannerDisplay = new BannerDisplay(super.page);
-        initWishButtons();
-        initWestPanel();
         initNorthPanel(primogems);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: initializes buttons in the left panel
-    private void initWestPanel() {
-        JPanel westPanel = new JPanel();
-        westPanel.setOpaque(false);
-        westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
-
-        inventoryButton = new StyledButton("View Inventory");
-        westPanel.add(inventoryButton);
-        inventoryButton.addActionListener(this);
-
-        saveButton = new StyledButton("Save Inventory");
-        westPanel.add(saveButton);
-        saveButton.addActionListener(this);
-
-        loadButton = new StyledButton("Load Inventory");
-        westPanel.add(loadButton);
-        loadButton.addActionListener(this);
-
-        super.page.add(westPanel, BorderLayout.WEST);
+        initBottomPanel();
     }
 
     // MODIFIES: this
@@ -64,6 +43,15 @@ public class BannerMenu extends Page implements ActionListener {
         JPanel northPanel = new JPanel();
         northPanel.setOpaque(false);
         northPanel.setLayout(new BorderLayout());
+
+        JPanel topLeftPanel = new JPanel();
+        topLeftPanel.setOpaque(false);
+        JLabel wishLogoLabel = new JLabel();
+        wishLogoLabel.setIcon(loadImageFromPath(WISH_LOGO_PATH, 0.7));
+        topLeftPanel.add(wishLogoLabel);
+        topLeftPanel.add(new JLabel("<html><font color='#FFFFFF'>Genshin Wish Simulator</font></html>"));
+        northPanel.add(topLeftPanel, BorderLayout.WEST);
+
         initBannerButtons(northPanel);
         initPrimogemCounter(northPanel, primogems);
         super.page.add(northPanel, BorderLayout.NORTH);
@@ -84,9 +72,7 @@ public class BannerMenu extends Page implements ActionListener {
     private void initBannerButtons(JPanel parent) {
         JPanel bannerButtonArea = new JPanel();
         bannerButtonArea.setOpaque(false);
-        bannerButtonArea.setLayout(new GridLayout(1, 2));
         bannerButtonArea.setBorder(new EmptyBorder(0, 40, 10, 40));
-        bannerButtonArea.setSize(WIDTH / 2, HEIGHT / 5);
 
         eventBannerButton = new StyledButton("Event Banner");
         bannerButtonArea.add(eventBannerButton);
@@ -100,23 +86,53 @@ public class BannerMenu extends Page implements ActionListener {
     }
 
     // MODIFIES: this
-    // EFFECTS: instantiates all tools to the bottom of the page
-    private void initWishButtons() {
+    // EFFECTS: creates bottom panel and adds it to this page
+    private void initBottomPanel() {
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setOpaque(false);
+        initWishButtons(bottomPanel);
+        initBottomLeftPanel(bottomPanel);
+        super.page.add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: creates wish buttons and adds it to parent at the right
+    private void initWishButtons(JPanel parent) {
         JPanel wishButtonArea = new JPanel();
         wishButtonArea.setOpaque(false);
-        wishButtonArea.setLayout(new GridLayout(0, 2));
         wishButtonArea.setBorder(new EmptyBorder(0, 40, 10, 40));
-        wishButtonArea.setSize(WIDTH / 2, HEIGHT / 5);
 
-        singleWishButton = new WishButton("Wish x1");
+        singleWishButton = new WishButton(1);
         wishButtonArea.add(singleWishButton);
         singleWishButton.addActionListener(this);
 
-        multipleWishButton = new WishButton("Wish x10");
+        multipleWishButton = new WishButton(10);
         wishButtonArea.add(multipleWishButton);
         multipleWishButton.addActionListener(this);
 
-        super.page.add(wishButtonArea, BorderLayout.SOUTH);
+        parent.add(wishButtonArea, BorderLayout.EAST);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes inventory buttons and adds it to left of parent panel
+    private void initBottomLeftPanel(JPanel parent) {
+        JPanel bottomLeftPanel = new JPanel();
+        bottomLeftPanel.setBorder(new EmptyBorder(50, 0, 0, 0));
+        bottomLeftPanel.setOpaque(false);
+
+        inventoryButton = new StyledButton("View Inventory");
+        bottomLeftPanel.add(inventoryButton);
+        inventoryButton.addActionListener(this);
+
+        saveButton = new StyledButton("Save Inventory");
+        bottomLeftPanel.add(saveButton);
+        saveButton.addActionListener(this);
+
+        loadButton = new StyledButton("Load Inventory");
+        bottomLeftPanel.add(loadButton);
+        loadButton.addActionListener(this);
+
+        parent.add(bottomLeftPanel, BorderLayout.WEST);
     }
 
     // MODIFIES: this

@@ -20,17 +20,19 @@ public class WishResult extends Page implements ActionListener {
     private static final String GACHA_SPLASH_PATH = "data/static/images/gacha-splashes/";
     private static final String WEAPON_BG_PATH = "data/static/images/backgrounds/";
     private static final String BACKGROUND_IMAGE_PATH = "data/static/images/backgrounds/wish-background.jpeg";
+    private static final String RESULT_CARD_PATH = "data/static/images/backgrounds/resultcard-bg.png";
     private static final double GACHA_SPLASH_SCALE = 0.25;
 
     public static final String PAGE_ID = "wishResult";
 
     private Map<String, ImageIcon> imageCache;
     private Map<WeaponType, ImageIcon> weaponBgCache;
+    private ImageIcon resultCardIcon;
     private List<Wish> displayWishes;
-
     private CardLayout wishCards;
     private JPanel displayPanel;
     private JButton skipButton;
+    private GridBagConstraints imageConstraints;
     private int currentPanelIndex;
     private int lastPanelIndex;
 
@@ -42,6 +44,12 @@ public class WishResult extends Page implements ActionListener {
         this.displayWishes = new ArrayList<>();
         this.currentPanelIndex = 0;
         this.lastPanelIndex = 0;
+        this.resultCardIcon = loadImageFromPath(RESULT_CARD_PATH, 0.6);
+        this.imageConstraints = new GridBagConstraints();
+        this.imageConstraints.gridx = 0;
+        this.imageConstraints.gridy = 0;
+        this.imageConstraints.anchor = GridBagConstraints.CENTER;
+        this.imageConstraints.insets = new Insets(10, 10, 10, 10);
         this.loadAllWeaponBgImages();
         this.loadAllWishImages(allWishes);
         this.initDisplay();
@@ -56,7 +64,12 @@ public class WishResult extends Page implements ActionListener {
 
         JPanel skipButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         skipButtonPanel.setOpaque(false);
-        skipButton = new JButton("Skip");
+        skipButton = new JButton("<html><span style='font-size:16pt;'>Skip</span></html>");
+        skipButton.setForeground(Color.WHITE);
+        skipButton.setContentAreaFilled(false);
+        skipButton.setBorderPainted(false);
+        skipButton.setFocusPainted(false);
+        skipButton.setOpaque(false);
         skipButton.addActionListener(this);
         skipButtonPanel.add(skipButton);
 
@@ -130,8 +143,8 @@ public class WishResult extends Page implements ActionListener {
     // MODIFIES: this
     // EFFECTS: displays wishes on screen
     public void onPageSwitch(List<Wish> wishes) {
-        displayWishes = wishes;
         displayPanel.removeAll();
+        displayWishes = wishes;
         skipButton.setVisible(wishes.size() != 1);
         currentPanelIndex = 0;
         lastPanelIndex = wishes.size() - 1;
@@ -143,6 +156,9 @@ public class WishResult extends Page implements ActionListener {
         if (wishes.size() != 1) {
             addSummaryPanel();
         }
+
+        displayPanel.revalidate();
+        displayPanel.repaint();
     }
 
     // MODIFIES: this
@@ -152,20 +168,14 @@ public class WishResult extends Page implements ActionListener {
         individualWishPanel.setOpaque(false);
         individualWishPanel.setLayout(new GridBagLayout());
 
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.anchor = GridBagConstraints.CENTER;
-        constraints.insets = new Insets(10, 10, 10, 10);
-
         ImageIcon wishIcon = imageCache.get(wish.getName());
         JLabel wishLabel = new JLabel(wishIcon);
-        individualWishPanel.add(wishLabel, constraints);
+        individualWishPanel.add(wishLabel, imageConstraints);
 
         if (wish instanceof Weapon) {
             ImageIcon weaponBgIcon = weaponBgCache.get(((Weapon) wish).getWeaponType());
             JLabel weaponBgLabel = new JLabel(weaponBgIcon);
-            individualWishPanel.add(weaponBgLabel, constraints);
+            individualWishPanel.add(weaponBgLabel, imageConstraints);
         }
 
         displayPanel.add(individualWishPanel, BorderLayout.CENTER);
@@ -211,11 +221,20 @@ public class WishResult extends Page implements ActionListener {
         finalDisplayPanel.setOpaque(false);
         finalDisplayPanel.setLayout(new GridLayout(1, displayWishes.size()));
         for (Wish wish : displayWishes) {
+            JPanel wishPanel = new JPanel(new GridBagLayout());
+            wishPanel.setOpaque(false);
+
             ImageIcon wishIcon = imageCache.get(wish.getName());
             int scaledWidth = (int) (wishIcon.getIconWidth() * GACHA_SPLASH_SCALE);
             int scaledHeight = (int) (wishIcon.getIconHeight() * GACHA_SPLASH_SCALE);
             Image wishImage = wishIcon.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-            finalDisplayPanel.add(new JLabel(new ImageIcon(wishImage)));
+            JLabel wishImageLabel = new JLabel(new ImageIcon(wishImage));
+            wishPanel.add(wishImageLabel, imageConstraints);
+
+            JLabel resultCardLabel = new JLabel(resultCardIcon);
+            wishPanel.add(resultCardLabel, imageConstraints);
+
+            finalDisplayPanel.add(wishPanel);
         }
 
         outerPanel.add(finalDisplayPanel, BorderLayout.CENTER);

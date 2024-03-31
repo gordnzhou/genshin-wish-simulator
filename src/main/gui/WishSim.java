@@ -22,16 +22,17 @@ import java.util.List;
 import java.util.Set;
 
 public class WishSim extends JFrame {
-    private static final int STARTING_PRIMOGEMS = 5000;
-
-    private static final String JSON_STORE = "./data/inventory.json";
-    private static final String STANDARD_BANNER_JSON_PATH = "./data/static/standard_banner.json";
-    private static final String EVENT_BANNER_JSON_PATH = "./data/static/event_banner.json";
-
+    public static final int STARTING_PRIMOGEMS = 5000;
     public static final int WIDTH = 1200;
     public static final int HEIGHT = 800;
     public static final int PRIMOGEMS_PER_WISH = 160;
 
+    private static final String JSON_STORE = "./data/inventory.json";
+    private static final String STANDARD_BANNER_JSON_PATH = "./data/static/standard_banner.json";
+    private static final String EVENT_BANNER_JSON_PATH = "./data/static/event_banner.json";
+    private static final String FONT_PATH = "data/static/fonts/genshin-font.ttf";
+
+    private Font genshinFont;
     private Banner standardBanner;
     private Banner eventBanner;
     private Banner currentBanner;
@@ -55,12 +56,28 @@ public class WishSim extends JFrame {
     public WishSim() {
         super("Genshin Wish Simulator");
         this.initializeFields();
+        this.initializeFont();
         this.initializeDisplay();
         this.initializePages();
 
         WishMouseListener wml = new WishMouseListener();
         addMouseListener(wml);
         setVisible(true);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes Genshin font and sets it as default font
+    private void initializeFont() {
+        try {
+            genshinFont = Font.createFont(Font.TRUETYPE_FONT, new File(FONT_PATH));
+            genshinFont = genshinFont.deriveFont(Font.PLAIN, 14);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(genshinFont);
+            UIManager.put("Button.font", genshinFont);
+            UIManager.put("Label.font", genshinFont);
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // MODIFIES: this
@@ -271,5 +288,9 @@ public class WishSim extends JFrame {
             System.out.println("Error Reading Image from '" + path + "' : " + e.getMessage());
             return null;
         }
+    }
+
+    public Font getGenshinFont() {
+        return genshinFont;
     }
 }

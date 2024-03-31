@@ -1,13 +1,11 @@
 package gui.components;
 
-import model.Inventory;
 import model.wish.Character;
 import model.wish.Weapon;
 import model.wish.Wish;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.Objects;
 
 public class InventoryEntry {
 
