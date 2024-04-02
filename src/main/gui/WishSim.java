@@ -19,7 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class WishSim extends JFrame {
     public static final int STARTING_PRIMOGEMS = 5000;
@@ -32,7 +32,6 @@ public class WishSim extends JFrame {
     private static final String EVENT_BANNER_JSON_PATH = "./data/static/event_banner.json";
     private static final String FONT_PATH = "data/static/fonts/genshin-font.ttf";
 
-    private Font genshinFont;
     private Banner standardBanner;
     private Banner eventBanner;
     private Banner currentBanner;
@@ -49,8 +48,11 @@ public class WishSim extends JFrame {
     private WishAnimation wishAnimation;
     private WishResult wishResult;
 
+    private Map<String, ImageIcon> gachaImageCache;
+    private Map<String, ImageIcon> faceImageCache;
+
     public static void main(String[] args) {
-        WishSim wishSim = new WishSim();
+        new WishSim();
     }
 
     public WishSim() {
@@ -69,7 +71,7 @@ public class WishSim extends JFrame {
     // EFFECTS: initializes Genshin font and sets it as default font
     private void initializeFont() {
         try {
-            genshinFont = Font.createFont(Font.TRUETYPE_FONT, new File(FONT_PATH));
+            Font genshinFont = Font.createFont(Font.TRUETYPE_FONT, new File(FONT_PATH));
             genshinFont = genshinFont.deriveFont(Font.PLAIN, 14);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(genshinFont);
@@ -89,6 +91,8 @@ public class WishSim extends JFrame {
         this.inventory = new Inventory(new HashMap<>(), STARTING_PRIMOGEMS);
         this.jsonReader = new JsonReader(JSON_STORE);
         this.jsonWriter = new JsonWriter(JSON_STORE);
+        this.gachaImageCache = new HashMap<>();
+        this.faceImageCache = new HashMap<>();
     }
 
     // MODIFIES: this
@@ -103,13 +107,11 @@ public class WishSim extends JFrame {
         cards = new CardLayout();
         wishSim = new JPanel(cards);
         setContentPane(wishSim);
-        Set<Wish> allWishes = standardBanner.getAllWishes();
-        allWishes.addAll(eventBanner.getAllWishes());
 
         bannerMenu = new BannerMenu(this, STARTING_PRIMOGEMS);
-        inventoryMenu = new InventoryMenu(this);
+        inventoryMenu = new InventoryMenu(this, gachaImageCache, faceImageCache);
         wishAnimation = new WishAnimation(this);
-        wishResult = new WishResult(this, allWishes);
+        wishResult = new WishResult(this, gachaImageCache);
         currentPage = bannerMenu;
     }
 
@@ -252,13 +254,13 @@ public class WishSim extends JFrame {
         }
     }
 
-    private void handleMousePressed(MouseEvent e) {
+    private void handleMousePressed() {
         currentPage.handleMousePressed();
     }
 
     private class WishMouseListener extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
-            handleMousePressed(e);
+            handleMousePressed();
         }
     }
 
@@ -288,9 +290,5 @@ public class WishSim extends JFrame {
             System.out.println("Error Reading Image from '" + path + "' : " + e.getMessage());
             return null;
         }
-    }
-
-    public Font getGenshinFont() {
-        return genshinFont;
     }
 }

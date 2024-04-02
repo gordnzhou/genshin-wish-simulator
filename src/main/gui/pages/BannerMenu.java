@@ -49,7 +49,7 @@ public class BannerMenu extends Page implements ActionListener {
         JLabel wishLogoLabel = new JLabel();
         wishLogoLabel.setIcon(loadImageFromPath(WISH_LOGO_PATH, 0.7));
         topLeftPanel.add(wishLogoLabel);
-        topLeftPanel.add(new JLabel("<html><font color='#FFFFFF'>Genshin Wish Simulator</font></html>"));
+        topLeftPanel.add(new JLabel("<html><font color='#FFFFFF'>Genshin Wish Simulator<</font></html>"));
         northPanel.add(topLeftPanel, BorderLayout.WEST);
 
         initBannerButtons(northPanel);
@@ -138,6 +138,8 @@ public class BannerMenu extends Page implements ActionListener {
     // MODIFIES: this
     // EFFECTS: updates PrimogemCounter to reflect primogems
     public void updatePrimogems(int primogems) {
+        singleWishButton.updatePrimogems(primogems);
+        multipleWishButton.updatePrimogems(primogems);
         primogemCounter.updateCount(primogems);
     }
 

@@ -16,8 +16,8 @@ public class PrimogemCounter implements ActionListener {
     private static final double ICON_SCALE = 0.11;
 
     private JPanel panel;
-    private JLabel primogemsLabel;
-    private PlusButton addButton;
+    private final JLabel primogemsLabel;
+    private final PlusButton addButton;
 
     WishSim wishSim;
 
@@ -46,9 +46,7 @@ public class PrimogemCounter implements ActionListener {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setColor(new Color(0, 0, 0, 100));
-                int arcWidth = 30;
-                int arcHeight = 30;
-                Shape roundedRect = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), arcWidth, arcHeight);
+                Shape roundedRect = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 30, 30);
                 g2.fill(roundedRect);
             }
         };

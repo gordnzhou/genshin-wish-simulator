@@ -25,21 +25,22 @@ public class WishResult extends Page implements ActionListener {
 
     public static final String PAGE_ID = "wishResult";
 
-    private Map<String, ImageIcon> imageCache;
-    private Map<WeaponType, ImageIcon> weaponBgCache;
-    private ImageIcon resultCardIcon;
+    private final Map<String, ImageIcon> gachaImageCache;
+    private final Map<WeaponType, ImageIcon> weaponBgCache;
+    private int currentPanelIndex;
+    private int lastPanelIndex;
+
+    private final ImageIcon resultCardIcon;
     private List<Wish> displayWishes;
     private CardLayout wishCards;
     private JPanel displayPanel;
     private JButton skipButton;
-    private GridBagConstraints imageConstraints;
-    private int currentPanelIndex;
-    private int lastPanelIndex;
+    private final GridBagConstraints imageConstraints;
 
-    public WishResult(WishSim wishSim, Set<Wish> allWishes) {
+    public WishResult(WishSim wishSim, Map<String, ImageIcon> gachaImageCache) {
         super(wishSim, PAGE_ID, BACKGROUND_IMAGE_PATH);
         this.wishSim = wishSim;
-        this.imageCache = new HashMap<>();
+        this.gachaImageCache = gachaImageCache;
         this.weaponBgCache = new HashMap<>();
         this.displayWishes = new ArrayList<>();
         this.currentPanelIndex = 0;
@@ -51,7 +52,6 @@ public class WishResult extends Page implements ActionListener {
         this.imageConstraints.anchor = GridBagConstraints.CENTER;
         this.imageConstraints.insets = new Insets(10, 10, 10, 10);
         this.loadAllWeaponBgImages();
-        this.loadAllWishImages(allWishes);
         this.initDisplay();
     }
 
@@ -78,29 +78,6 @@ public class WishResult extends Page implements ActionListener {
         super.page.add(skipButtonPanel, BorderLayout.NORTH);
     }
 
-    // MODIFIES: this
-    // EFFECTS: loads every wish's image file and adds it to imageCache
-    private void loadAllWishImages(Set<Wish> allWishes) {
-        for (Wish wish : allWishes) {
-            String cacheKey = wish.getName();
-            String wishImagePath = GACHA_SPLASH_PATH + wish.getName()
-                    .toLowerCase()
-                    .replaceAll("\\s", "-")
-                    .replaceAll("'", "_") + ".png";
-
-            ImageIcon wishImageIcon;
-            if (wish instanceof Character) {
-                wishImageIcon = loadImageFromPath(wishImagePath, 800, 800);
-            } else {
-                wishImageIcon = loadImageFromPath(wishImagePath, 0.77);
-            }
-
-            System.out.format("Loaded image for %s with width: %d height: %d\n",
-                    cacheKey, wishImageIcon.getIconWidth(), wishImageIcon.getIconHeight());
-            imageCache.put(cacheKey, wishImageIcon);
-        }
-    }
-
 
     // MODIFIES: this
     // EFFECTS: loads all weapon background image files to weaponBgCache
@@ -108,9 +85,6 @@ public class WishResult extends Page implements ActionListener {
         for (WeaponType weaponType : WeaponType.values()) {
             String weaponBgPath = WEAPON_BG_PATH + String.format("bg-%s.png", weaponType.name().toLowerCase());
             ImageIcon weaponBgIcon = loadImageFromPath(weaponBgPath, 0.7);
-
-            System.out.format("Loaded image for %s with width: %d height: %d\n",
-                    weaponType.name(), weaponBgIcon.getIconWidth(), weaponBgIcon.getIconHeight());
             weaponBgCache.put(weaponType, weaponBgIcon);
         }
     }
@@ -144,6 +118,7 @@ public class WishResult extends Page implements ActionListener {
     // EFFECTS: displays wishes on screen
     public void onPageSwitch(List<Wish> wishes) {
         displayPanel.removeAll();
+        loadWishImages(wishes);
         displayWishes = wishes;
         skipButton.setVisible(wishes.size() != 1);
         currentPanelIndex = 0;
@@ -168,7 +143,7 @@ public class WishResult extends Page implements ActionListener {
         individualWishPanel.setOpaque(false);
         individualWishPanel.setLayout(new GridBagLayout());
 
-        ImageIcon wishIcon = imageCache.get(wish.getName());
+        ImageIcon wishIcon = gachaImageCache.get(wish.getName());
         JLabel wishLabel = new JLabel(wishIcon);
         individualWishPanel.add(wishLabel, imageConstraints);
 
@@ -224,7 +199,7 @@ public class WishResult extends Page implements ActionListener {
             JPanel wishPanel = new JPanel(new GridBagLayout());
             wishPanel.setOpaque(false);
 
-            ImageIcon wishIcon = imageCache.get(wish.getName());
+            ImageIcon wishIcon = gachaImageCache.get(wish.getName());
             int scaledWidth = (int) (wishIcon.getIconWidth() * GACHA_SPLASH_SCALE);
             int scaledHeight = (int) (wishIcon.getIconHeight() * GACHA_SPLASH_SCALE);
             Image wishImage = wishIcon.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
@@ -240,5 +215,34 @@ public class WishResult extends Page implements ActionListener {
         outerPanel.add(finalDisplayPanel, BorderLayout.CENTER);
         displayPanel.add(outerPanel);
         lastPanelIndex += 1;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: for every wish, loads the wish's image file and adds it to imageCache if not already loaded
+    private void loadWishImages(List<Wish> wishes) {
+        for (Wish wish : wishes) {
+            String cacheKey = wish.getName();
+            String wishImagePath = GACHA_SPLASH_PATH + wish.getName()
+                    .toLowerCase()
+                    .replaceAll("\\s", "-")
+                    .replaceAll("'", "_") + ".png";
+
+            if (gachaImageCache.containsKey(cacheKey)) {
+                continue;
+            }
+
+            ImageIcon wishImageIcon;
+            if (wish instanceof Character) {
+                wishImageIcon = loadImageFromPath(wishImagePath, 800, 800);
+            } else {
+                wishImageIcon = loadImageFromPath(wishImagePath, 0.77);
+
+                assert wishImageIcon != null;
+                if (wishImageIcon.getIconHeight() < 300 & wishImageIcon.getIconWidth() < 300) {
+                    wishImageIcon = loadImageFromPath(wishImagePath, 1.5);
+                }
+            }
+            gachaImageCache.put(cacheKey, wishImageIcon);
+        }
     }
 }

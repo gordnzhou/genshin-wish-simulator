@@ -19,13 +19,13 @@ public class WishAnimation extends Page {
     private static final String SINGLE_4_WISH_PATH = "data/static/animations/wish-4-single.gif";
     private static final String MULTI_4_WISH_PATH = "data/static/animations/wish-4-multi.gif";
     private static final String SINGLE_3_WISH_PATH = "data/static/animations/wish-3-single.gif";
-
     public static final int WISH_ANIMATION_MILLIS = 7000;
+
     private static final String PAGE_ID = "wishAnimation";
 
+    private final JLabel imageLabel;
     private List<Wish> wishes;
     private Thread timeoutThread;
-    private JLabel imageLabel;
 
     public WishAnimation(WishSim wishSim) {
         super(wishSim, PAGE_ID, MENU_BACKGROUND_PATH);
@@ -40,7 +40,7 @@ public class WishAnimation extends Page {
     @Override
     public void handleMousePressed() {
         super.wishSim.switchToWishResult(wishes);
-        timeoutThread.stop();
+        timeoutThread.interrupt();
     }
 
     // MODIFIES: this
@@ -101,9 +101,8 @@ public class WishAnimation extends Page {
             try {
                 sleep(WISH_ANIMATION_MILLIS);
             } catch (InterruptedException e) {
-                System.out.println("Error Sleeping: " + e.getMessage());
+                return;
             }
-
             super.wishSim.switchToWishResult(wishes);
         });
         timeoutThread.start();

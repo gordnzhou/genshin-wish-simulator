@@ -1,38 +1,76 @@
 package gui.components;
 
-import model.wish.Character;
-import model.wish.Weapon;
 import model.wish.Wish;
 
 import javax.swing.*;
-import java.util.List;
+
+import java.awt.*;
+
+import static gui.WishSim.loadImageFromPath;
 
 public class InventoryEntry {
+    private static final String STAR_BG_PATH = "data/static/images/backgrounds/";
+    private static final String STAR_ICON_PATH = "data/static/images/star-icon.png";
 
-    private JLabel entryLabel;
-    private Wish wish;
+    public static final int ENTRY_SIZE = 192;
+
+    private JPanel entryPanel;
+    private final Wish wish;
     int copies;
 
-    // EFFECTS: constructs InventoryEntry from wish and creates label corresponding to wish
-    public InventoryEntry(Wish wish, int copies) {
+    // MODIFIES: this, wishEntries, inventoryPanel
+    // EFFECTS: constructs InventoryEntry from wish and creates panel card for wish;
+    //          adds this panel to inventoryPanel and this to wishEntries
+    public InventoryEntry(Wish wish, int copies, ImageIcon wishIcon) {
         this.wish = wish;
         this.copies = copies;
-        this.entryLabel = new JLabel();
+        initEntryPanel(wishIcon);
+    }
 
-        String name = wish.getName();
-        int rarity = wish.getRarity();
+    // MODIFIES: this
+    // EFFECTS: initializes entryPanel
+    private void initEntryPanel(ImageIcon wishIcon) {
+        String backgroundImagePath = STAR_BG_PATH + wish.getRarity() + "star-bg.png";
+        Image backgroundImage = loadImageFromPath(backgroundImagePath, ENTRY_SIZE, ENTRY_SIZE).getImage();
+        entryPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (backgroundImage != null) {
+                    g.drawImage(backgroundImage, 0, 0, ENTRY_SIZE, ENTRY_SIZE, this);
+                }
+            }
+        };
+        entryPanel.setPreferredSize(new Dimension(ENTRY_SIZE, ENTRY_SIZE));
+        entryPanel.setMaximumSize(new Dimension(ENTRY_SIZE, ENTRY_SIZE));
+        entryPanel.setLayout(null);
+        addPanelFooter();
+        JLabel wishIconLabel = new JLabel(wishIcon);
+        wishIconLabel.setBounds(0, 0, ENTRY_SIZE, ENTRY_SIZE);
+        entryPanel.add(wishIconLabel);
+    }
 
-        String text = "";
-        if (wish instanceof Weapon) {
-            text = String.format("- '%s' (%d stars), Weapon Type: %s, Copies: %d\n",
-                    name, rarity, ((Weapon) wish).getWeaponType(), copies);
-        } else if (wish instanceof Character) {
-            text = String.format("- '%s' (%d stars), Vision: %s, Weapon: %s, Constellation(s): %d\n",
-                    name, rarity, ((Character) wish).getVision(),
-                    ((Character) wish).getWeapon(), Math.min(copies, 6));
+    // MODIFIES: this
+    // EFFECTS: adds footer panel to this entryPanel
+    private void addPanelFooter() {
+        JPanel footerPanel = new JPanel();
+        footerPanel.setLayout(new BorderLayout());
+
+        footerPanel.add(new JLabel(wish.getName()), BorderLayout.NORTH);
+
+        JPanel rarityPanel = new JPanel();
+        ImageIcon starIcon = loadImageFromPath(STAR_ICON_PATH, 0.6);
+        for (int i = 0; i < wish.getRarity(); i++) {
+            rarityPanel.add(new JLabel(starIcon));
         }
+        footerPanel.add(rarityPanel, BorderLayout.SOUTH);
 
-        entryLabel.setText(text);
+        footerPanel.setBounds(0, ENTRY_SIZE - 50, ENTRY_SIZE, 50);
+        entryPanel.add(footerPanel, BorderLayout.SOUTH);
+    }
+
+    public void updateCopies(int copies) {
+        this.copies = copies;
     }
 
     public int getRarity() {
@@ -40,21 +78,18 @@ public class InventoryEntry {
     }
 
     // MODIFIES: this
-    // EFFECTS: unhides this entry's label
+    // EFFECTS: shows this entry's label
     public void showLabel() {
-        this.entryLabel.setVisible(true);
+        entryPanel.setVisible(true);
+    }
+
+    public JPanel getEntryPanel() {
+        return entryPanel;
     }
 
     // MODIFIES: this
     // EFFECTS: hides this entry's label
     public void hideLabel() {
-        this.entryLabel.setVisible(false);
-    }
-
-    // MODIFIES: wishEntries, inventoryPanel
-    // EFFECTS: adds this to wishEntries and inventoryPanel
-    public void addEntry(List<InventoryEntry> wishEntries, JPanel inventoryPanel) {
-        wishEntries.add(this);
-        inventoryPanel.add(this.entryLabel);
+        entryPanel.setVisible(false);
     }
 }
