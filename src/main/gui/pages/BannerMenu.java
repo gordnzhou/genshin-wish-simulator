@@ -5,6 +5,7 @@ import gui.components.BannerDisplay;
 import gui.components.PrimogemCounter;
 import gui.components.StyledButton;
 import gui.components.WishButton;
+import model.banner.Banner;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -15,6 +16,7 @@ import java.awt.event.ActionListener;
 import static gui.WishSim.*;
 
 public class BannerMenu extends Page implements ActionListener {
+    private static BannerMenu bannerMenu;
     private static final String PAGE_ID = "bannerMenu";
 
     private static final String WISH_LOGO_PATH = "data/static/images/wish-logo.png";
@@ -35,6 +37,14 @@ public class BannerMenu extends Page implements ActionListener {
         bannerDisplay = new BannerDisplay(super.page);
         initNorthPanel();
         initBottomPanel();
+    }
+
+    // EFFECTS: returns this wishSim instance
+    public static BannerMenu getInstance() {
+        if (bannerMenu == null) {
+            bannerMenu = new BannerMenu();
+        }
+        return bannerMenu;
     }
 
     // MODIFIES: this

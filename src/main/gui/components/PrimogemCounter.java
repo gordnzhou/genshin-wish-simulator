@@ -77,7 +77,6 @@ public class PrimogemCounter implements ActionListener, InventoryObserver {
 
     @Override
     public void update(int primogems) {
-        System.out.println("SETTING TO: " + primogems);
         String newText = String.format("%d    ", primogems);
         primogemsLabel.setText(newText);
     }

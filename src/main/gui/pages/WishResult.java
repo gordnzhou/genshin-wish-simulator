@@ -21,6 +21,7 @@ public class WishResult extends Page implements ActionListener {
     private static final String RESULT_CARD_PATH = "data/static/images/backgrounds/resultcard-bg.png";
     private static final double GACHA_SPLASH_SCALE = 0.25;
 
+    private static WishResult wishResult;
     public static final String PAGE_ID = "wishResult";
 
     private Map<WeaponType, ImageIcon> weaponBgCache;
@@ -34,11 +35,19 @@ public class WishResult extends Page implements ActionListener {
     private JButton skipButton;
     private GridBagConstraints imageConstraints;
 
-    public WishResult() {
+    private WishResult() {
         super(PAGE_ID, BACKGROUND_IMAGE_PATH);
         initFields();
         loadAllWeaponBgImages();
         initDisplay();
+    }
+
+    // EFFECTS: returns this wishSim instance
+    public static WishResult getInstance() {
+        if (wishResult == null) {
+            wishResult = new WishResult();
+        }
+        return wishResult;
     }
 
     // MODIFIES: this

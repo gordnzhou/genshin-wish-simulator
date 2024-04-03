@@ -2,6 +2,8 @@ package gui;
 
 import exceptions.NotEnoughPrimosException;
 import gui.pages.*;
+import model.Event;
+import model.EventLog;
 import model.Inventory;
 import model.banner.Banner;
 import model.wish.Character;
@@ -14,6 +16,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,10 +52,6 @@ public class WishSim extends JFrame {
     private CardLayout cards;
     private JPanel wishSimPanel;
     private Page currentPage;
-    private BannerMenu bannerMenu;
-    private InventoryMenu inventoryMenu;
-    private WishAnimation wishAnimation;
-    private WishResult wishResult;
 
     private Map<String, ImageIcon> gachaImageCache;
     private Map<String, ImageIcon> faceImageCache;
@@ -106,6 +106,16 @@ public class WishSim extends JFrame {
     private void initGui() {
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                for (Event event : EventLog.getInstance()) {
+                    System.out.println(event.toString() + "\n");
+                }
+                EventLog.getInstance().clear();
+                dispose();
+            }
+        });
         setUndecorated(false);
         initPages();
         WishMouseListener wml = new WishMouseListener();
@@ -119,17 +129,11 @@ public class WishSim extends JFrame {
         cards = new CardLayout();
         wishSimPanel = new JPanel(cards);
         setContentPane(wishSimPanel);
-
-        bannerMenu = new BannerMenu();
-        inventory.addObserver(bannerMenu.getMultipleWishButton());
-        inventory.addObserver(bannerMenu.getSingleWishButton());
-        inventory.addObserver(bannerMenu.getPrimogemCounter());
+        inventory.addObserver(BannerMenu.getInstance().getMultipleWishButton());
+        inventory.addObserver(BannerMenu.getInstance().getSingleWishButton());
+        inventory.addObserver(BannerMenu.getInstance().getPrimogemCounter());
         inventory.addPrimogems(0);
-
-        inventoryMenu = new InventoryMenu();
-        wishAnimation = new WishAnimation();
-        wishResult = new WishResult();
-        currentPage = bannerMenu;
+        currentPage = BannerMenu.getInstance();
     }
 
     // EFFECTS: loads banners from the JSON file at the given path and returns it
@@ -182,29 +186,29 @@ public class WishSim extends JFrame {
     // MODIFIES: this
     // EFFECTS: sets currentPage to bannerMenu
     public void switchToBannerMenu() {
-        switchPage(bannerMenu);
+        switchPage(BannerMenu.getInstance());
     }
 
     // MODIFIES: this
     // EFFECTS: switches currentPage to wishAnimation after
     //          making a wish in bannerMenu
     private void switchToWishAnimation(List<Wish> wishes) {
-        switchPage(wishAnimation);
-        wishAnimation.onPageSwitch(wishes);
+        switchPage(WishAnimation.getInstance());
+        WishAnimation.getInstance().onPageSwitch(wishes);
     }
 
     // MODIFIES: this
     // EFFECTS: switches to wishResult after wishAnimation
     public void switchToWishResult(List<Wish> wishes) {
-        switchPage(wishResult);
-        wishResult.onPageSwitch(wishes);
+        switchPage(WishResult.getInstance());
+        WishResult.getInstance().onPageSwitch(wishes);
     }
 
     // MODIFIES: this
     // EFFECTS: switches currentPage to InventoryMenu
     public void switchToInventoryMenu() {
-        switchPage(inventoryMenu);
-        inventoryMenu.onPageSwitch(inventory);
+        switchPage(InventoryMenu.getInstance());
+        InventoryMenu.getInstance().onPageSwitch(inventory);
     }
 
     // MODIFIES: this
@@ -248,9 +252,9 @@ public class WishSim extends JFrame {
     public void loadInventory() {
         try {
             inventory = jsonReader.readInventory();
-            inventory.addObserver(bannerMenu.getMultipleWishButton());
-            inventory.addObserver(bannerMenu.getSingleWishButton());
-            inventory.addObserver(bannerMenu.getPrimogemCounter());
+            inventory.addObserver(BannerMenu.getInstance().getMultipleWishButton());
+            inventory.addObserver(BannerMenu.getInstance().getSingleWishButton());
+            inventory.addObserver(BannerMenu.getInstance().getPrimogemCounter());
             inventory.addPrimogems(0);
             System.out.println("Loaded inventory from " + JSON_STORE);
         } catch (IOException e) {

@@ -18,6 +18,7 @@ import static gui.WishSim.*;
 import static gui.components.InventoryEntry.ENTRY_SIZE;
 
 public class InventoryMenu extends Page implements ActionListener {
+    private static InventoryMenu inventoryMenu;
     private static final String PAGE_ID = "InventoryMenu";
 
     private JPanel inventoryPanel;
@@ -27,13 +28,21 @@ public class InventoryMenu extends Page implements ActionListener {
     private int minRarity;
     private final Map<String, InventoryEntry> wishEntries;
 
-    public InventoryMenu() {
+    private InventoryMenu() {
         super(PAGE_ID, MENU_BACKGROUND_PATH);
         super.page.setLayout(new BorderLayout());
         this.minRarity = 3;
         this.wishEntries = new HashMap<>();
         initInventoryPanel();
         initButtonPanel();
+    }
+
+    // EFFECTS: returns this wishSim instance
+    public static InventoryMenu getInstance() {
+        if (inventoryMenu == null) {
+            inventoryMenu = new InventoryMenu();
+        }
+        return inventoryMenu;
     }
 
     // MODIFIES: this

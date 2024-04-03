@@ -33,7 +33,7 @@ public class Inventory implements Writable {
         inventoryObservers.add(inventoryObserver);
     }
 
-    // EFFECTS: called update() on inventoryObservers with primogems
+    // EFFECTS: called update() on inventoryObservers with current number of primogems
     private void updateObservers() {
         for (InventoryObserver observer : inventoryObservers) {
             observer.update(this.primogems);
@@ -67,16 +67,22 @@ public class Inventory implements Writable {
     // MODIFIES: this
     // EFFECTS: adds wish to inventory
     public void addWish(Wish wish) {
+        String eventString = String.format("Obtained a '%s'", wish.getName());
+
         if (wishes.containsKey(wish)) {
             wishes.put(wish, wishes.get(wish) + 1);
         } else {
+            eventString = eventString + " (NEW)";
             wishes.put(wish, 1);
         }
+
+        EventLog.getInstance().logEvent(new Event(eventString));
     }
 
     // EFFECTS: adds the given number of primogems to inventory only IF count > 0
     public void addPrimogems(int count) {
         primogems += Math.max(0, count);
+        EventLog.getInstance().logEvent(new Event("Added " + count + " primogems to inventory"));
         updateObservers();
     }
 

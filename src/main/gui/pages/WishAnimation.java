@@ -21,18 +21,27 @@ public class WishAnimation extends Page {
     private static final String SINGLE_3_WISH_PATH = "data/static/animations/wish-3-single.gif";
     public static final int WISH_ANIMATION_MILLIS = 7000;
 
+    private static WishAnimation wishAnimation;
     private static final String PAGE_ID = "wishAnimation";
 
     private final JLabel imageLabel;
     private List<Wish> wishes;
     private Thread timeoutThread;
 
-    public WishAnimation() {
+    private WishAnimation() {
         super(PAGE_ID, MENU_BACKGROUND_PATH);
         wishes = new ArrayList<>();
         imageLabel = new JLabel();
         super.page.setLayout(new GridLayout(1, 1));
         super.page.add(imageLabel);
+    }
+
+    // EFFECTS: returns this wishSim instance
+    public static WishAnimation getInstance() {
+        if (wishAnimation == null) {
+            wishAnimation = new WishAnimation();
+        }
+        return wishAnimation;
     }
 
     @Override
