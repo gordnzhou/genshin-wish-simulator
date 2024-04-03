@@ -2,7 +2,6 @@ package gui.pages;
 
 import gui.WishSim;
 import model.WeaponType;
-import model.wish.Character;
 import model.wish.Weapon;
 import model.wish.Wish;
 
@@ -17,7 +16,6 @@ import java.util.List;
 import static gui.WishSim.loadImageFromPath;
 
 public class WishResult extends Page implements ActionListener {
-    private static final String GACHA_SPLASH_PATH = "data/static/images/gacha-splashes/";
     private static final String WEAPON_BG_PATH = "data/static/images/backgrounds/";
     private static final String BACKGROUND_IMAGE_PATH = "data/static/images/backgrounds/wish-background.jpeg";
     private static final String RESULT_CARD_PATH = "data/static/images/backgrounds/resultcard-bg.png";
@@ -25,22 +23,27 @@ public class WishResult extends Page implements ActionListener {
 
     public static final String PAGE_ID = "wishResult";
 
-    private final Map<String, ImageIcon> gachaImageCache;
-    private final Map<WeaponType, ImageIcon> weaponBgCache;
+    private Map<WeaponType, ImageIcon> weaponBgCache;
     private int currentPanelIndex;
     private int lastPanelIndex;
 
-    private final ImageIcon resultCardIcon;
+    private ImageIcon resultCardIcon;
     private List<Wish> displayWishes;
     private CardLayout wishCards;
     private JPanel displayPanel;
     private JButton skipButton;
-    private final GridBagConstraints imageConstraints;
+    private GridBagConstraints imageConstraints;
 
-    public WishResult(WishSim wishSim, Map<String, ImageIcon> gachaImageCache) {
-        super(wishSim, PAGE_ID, BACKGROUND_IMAGE_PATH);
-        this.wishSim = wishSim;
-        this.gachaImageCache = gachaImageCache;
+    public WishResult() {
+        super(PAGE_ID, BACKGROUND_IMAGE_PATH);
+        initFields();
+        loadAllWeaponBgImages();
+        initDisplay();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes fields
+    private void initFields() {
         this.weaponBgCache = new HashMap<>();
         this.displayWishes = new ArrayList<>();
         this.currentPanelIndex = 0;
@@ -51,8 +54,6 @@ public class WishResult extends Page implements ActionListener {
         this.imageConstraints.gridy = 0;
         this.imageConstraints.anchor = GridBagConstraints.CENTER;
         this.imageConstraints.insets = new Insets(10, 10, 10, 10);
-        this.loadAllWeaponBgImages();
-        this.initDisplay();
     }
 
     // MODIFIES: this
@@ -78,7 +79,6 @@ public class WishResult extends Page implements ActionListener {
         super.page.add(skipButtonPanel, BorderLayout.NORTH);
     }
 
-
     // MODIFIES: this
     // EFFECTS: loads all weapon background image files to weaponBgCache
     private void loadAllWeaponBgImages() {
@@ -92,11 +92,10 @@ public class WishResult extends Page implements ActionListener {
     @Override
     public void handleMousePressed() {
         if (currentPanelIndex == lastPanelIndex) {
-            super.wishSim.switchToBannerMenu();
+            WishSim.getInstance().switchToBannerMenu();
         } else {
             currentPanelIndex += 1;
             wishCards.next(displayPanel);
-
             if (currentPanelIndex == lastPanelIndex) {
                 skipButton.setVisible(false);
             }
@@ -106,7 +105,7 @@ public class WishResult extends Page implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (currentPanelIndex == lastPanelIndex) {
-            super.wishSim.switchToBannerMenu();
+            WishSim.getInstance().switchToBannerMenu();
         } else {
             skipButton.setVisible(false);
             currentPanelIndex = lastPanelIndex;
@@ -118,7 +117,6 @@ public class WishResult extends Page implements ActionListener {
     // EFFECTS: displays wishes on screen
     public void onPageSwitch(List<Wish> wishes) {
         displayPanel.removeAll();
-        loadWishImages(wishes);
         displayWishes = wishes;
         skipButton.setVisible(wishes.size() != 1);
         currentPanelIndex = 0;
@@ -143,7 +141,7 @@ public class WishResult extends Page implements ActionListener {
         individualWishPanel.setOpaque(false);
         individualWishPanel.setLayout(new GridBagLayout());
 
-        ImageIcon wishIcon = gachaImageCache.get(wish.getName());
+        ImageIcon wishIcon = WishSim.getInstance().getGachaImage(wish);
         JLabel wishLabel = new JLabel(wishIcon);
         individualWishPanel.add(wishLabel, imageConstraints);
 
@@ -199,7 +197,7 @@ public class WishResult extends Page implements ActionListener {
             JPanel wishPanel = new JPanel(new GridBagLayout());
             wishPanel.setOpaque(false);
 
-            ImageIcon wishIcon = gachaImageCache.get(wish.getName());
+            ImageIcon wishIcon = WishSim.getInstance().getGachaImage(wish);
             int scaledWidth = (int) (wishIcon.getIconWidth() * GACHA_SPLASH_SCALE);
             int scaledHeight = (int) (wishIcon.getIconHeight() * GACHA_SPLASH_SCALE);
             Image wishImage = wishIcon.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
@@ -215,34 +213,5 @@ public class WishResult extends Page implements ActionListener {
         outerPanel.add(finalDisplayPanel, BorderLayout.CENTER);
         displayPanel.add(outerPanel);
         lastPanelIndex += 1;
-    }
-
-    // MODIFIES: this
-    // EFFECTS: for every wish, loads the wish's image file and adds it to imageCache if not already loaded
-    private void loadWishImages(List<Wish> wishes) {
-        for (Wish wish : wishes) {
-            String cacheKey = wish.getName();
-            String wishImagePath = GACHA_SPLASH_PATH + wish.getName()
-                    .toLowerCase()
-                    .replaceAll("\\s", "-")
-                    .replaceAll("'", "_") + ".png";
-
-            if (gachaImageCache.containsKey(cacheKey)) {
-                continue;
-            }
-
-            ImageIcon wishImageIcon;
-            if (wish instanceof Character) {
-                wishImageIcon = loadImageFromPath(wishImagePath, 800, 800);
-            } else {
-                wishImageIcon = loadImageFromPath(wishImagePath, 0.77);
-
-                assert wishImageIcon != null;
-                if (wishImageIcon.getIconHeight() < 300 & wishImageIcon.getIconWidth() < 300) {
-                    wishImageIcon = loadImageFromPath(wishImagePath, 1.5);
-                }
-            }
-            gachaImageCache.put(cacheKey, wishImageIcon);
-        }
     }
 }

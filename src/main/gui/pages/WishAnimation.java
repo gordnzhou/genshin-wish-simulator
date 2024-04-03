@@ -27,19 +27,17 @@ public class WishAnimation extends Page {
     private List<Wish> wishes;
     private Thread timeoutThread;
 
-    public WishAnimation(WishSim wishSim) {
-        super(wishSim, PAGE_ID, MENU_BACKGROUND_PATH);
-        super.page.setLayout(new GridLayout(1, 1));
-
+    public WishAnimation() {
+        super(PAGE_ID, MENU_BACKGROUND_PATH);
         wishes = new ArrayList<>();
         imageLabel = new JLabel();
-
+        super.page.setLayout(new GridLayout(1, 1));
         super.page.add(imageLabel);
     }
 
     @Override
     public void handleMousePressed() {
-        super.wishSim.switchToWishResult(wishes);
+        WishSim.getInstance().switchToWishResult(wishes);
         timeoutThread.interrupt();
     }
 
@@ -54,7 +52,7 @@ public class WishAnimation extends Page {
     // EFFECTS: returns the highest star rarity in wishes
     private int getMaxRarity() {
         int result = 3;
-        for (Wish wish : this.wishes) {
+        for (Wish wish : wishes) {
             if (wish.getRarity() > result) {
                 result = wish.getRarity();
             }
@@ -65,26 +63,22 @@ public class WishAnimation extends Page {
     // EFFECTS: returns the file path for wishes' corresponding animation
     //          based on the number of wishes made and the highest rarity wish
     private String getWishAnimationPath() {
-        int wishCount = this.wishes.size();
-        int maxRarity = this.getMaxRarity();
-
-        switch (maxRarity) {
+        switch (getMaxRarity()) {
             case 3:
                 return SINGLE_3_WISH_PATH;
             case 4:
-                if (wishCount == 1) {
+                if (wishes.size() == 1) {
                     return SINGLE_4_WISH_PATH;
                 } else {
                     return MULTI_4_WISH_PATH;
                 }
             case 5:
-                if (wishCount == 1) {
+                if (wishes.size() == 1) {
                     return SINGLE_5_WISH_PATH;
                 } else {
                     return MULTI_5_WISH_PATH;
                 }
         }
-
         return "";
     }
 
@@ -95,7 +89,6 @@ public class WishAnimation extends Page {
         ImageIcon icon = new ImageIcon(wishAnimationPath);
         icon.setImage(icon.getImage().getScaledInstance(WIDTH, HEIGHT, Image.SCALE_DEFAULT));
         imageLabel.setIcon(icon);
-        System.out.println(wishAnimationPath);
 
         timeoutThread = new Thread(() -> {
             try {
@@ -103,7 +96,7 @@ public class WishAnimation extends Page {
             } catch (InterruptedException e) {
                 return;
             }
-            super.wishSim.switchToWishResult(wishes);
+            WishSim.getInstance().switchToWishResult(wishes);
         });
         timeoutThread.start();
     }

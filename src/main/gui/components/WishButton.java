@@ -1,11 +1,13 @@
 package gui.components;
 
+import model.InventoryObserver;
+
 import javax.swing.*;
 import java.awt.*;
 
 import static gui.WishSim.PRIMOGEMS_PER_WISH;
 
-public class WishButton extends JButton {
+public class WishButton extends JButton implements InventoryObserver {
     private static final String WISH_BUTTON_PATH = "data/static/images/wish-button.png";
 
     private static final String textColor = "#B0A7A0";
@@ -40,7 +42,8 @@ public class WishButton extends JButton {
         setHorizontalTextPosition(SwingConstants.CENTER);
     }
 
-    public void updatePrimogems(int primogems) {
+    @Override
+    public void update(int primogems) {
         if (primogems >= wishCount * PRIMOGEMS_PER_WISH) {
             setText(String.format(buttonText, wishCount, textColor,
                     getClass().getResource("/assets/primogem.png"), wishCount * PRIMOGEMS_PER_WISH));

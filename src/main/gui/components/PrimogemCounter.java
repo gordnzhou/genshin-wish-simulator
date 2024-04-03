@@ -1,6 +1,7 @@
 package gui.components;
 
 import gui.WishSim;
+import model.InventoryObserver;
 
 import javax.swing.*;
 
@@ -11,7 +12,7 @@ import java.awt.geom.RoundRectangle2D;
 
 import static gui.WishSim.loadImageFromPath;
 
-public class PrimogemCounter implements ActionListener {
+public class PrimogemCounter implements ActionListener, InventoryObserver {
     public static final String PRIMOGEM_PATH = "data/static/images/primogem.png";
     private static final double ICON_SCALE = 0.11;
 
@@ -19,12 +20,9 @@ public class PrimogemCounter implements ActionListener {
     private final JLabel primogemsLabel;
     private final PlusButton addButton;
 
-    WishSim wishSim;
-
     // EFFECTS: creates a counter and adds it to parent
-    public PrimogemCounter(JPanel parent, WishSim wishSim) {
+    public PrimogemCounter(JPanel parent) {
         this.initPanel();
-        this.wishSim = wishSim;
         JLabel iconLabel = new JLabel();
         iconLabel.setIcon(loadImageFromPath(PRIMOGEM_PATH, ICON_SCALE));
         this.panel.add(iconLabel);
@@ -53,17 +51,8 @@ public class PrimogemCounter implements ActionListener {
         this.panel.setOpaque(false);
     }
 
-    // REQUIRES: primogems >= 0
-    // MODIFIES: this
-    // EFFECTS: updates PrimogemCounter to show the given number of primogems
-    public void updateCount(int primogems) {
-        String newText = String.format("%d    ", primogems);
-        primogemsLabel.setText(newText);
-    }
-
-    // MODIFIES: this, WishSim
-    // EFFECTS: handles adding of primogems to inventory
-    private void handleAddPrimogems() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
         String input = JOptionPane.showInputDialog("Enter amount of Primogems you would like to purchase.");
         if (input == null) {
             return;
@@ -72,8 +61,7 @@ public class PrimogemCounter implements ActionListener {
         try {
             int count = Integer.parseInt(input);
             if (count > 0) {
-                wishSim.addPrimogems(count);
-
+                WishSim.getInstance().addPrimogems(count);
                 String successMessage = "Added " + count + " Primogems to your Inventory";
                 JOptionPane.showMessageDialog(null,
                         successMessage, "Purchase Success", JOptionPane.INFORMATION_MESSAGE);
@@ -88,9 +76,9 @@ public class PrimogemCounter implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addButton) {
-            handleAddPrimogems();
-        }
+    public void update(int primogems) {
+        System.out.println("SETTING TO: " + primogems);
+        String newText = String.format("%d    ", primogems);
+        primogemsLabel.setText(newText);
     }
 }

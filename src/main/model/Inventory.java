@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,11 +16,28 @@ public class Inventory implements Writable {
     private Map<Wish, Integer> wishes;
     private int primogems;
 
+    private List<InventoryObserver> inventoryObservers;
+
     // REQUIRES: wishes >= 0
     // EFFECTS: creates inventory with given wishes and primogems
     public Inventory(Map<Wish, Integer> wishes, int primogems) {
         this.wishes = wishes;
         this.primogems = primogems;
+        this.inventoryObservers = new ArrayList<>();
+        updateObservers();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: adds inventoryObserver to inventoryObservers;
+    public void addObserver(InventoryObserver inventoryObserver) {
+        inventoryObservers.add(inventoryObserver);
+    }
+
+    // EFFECTS: called update() on inventoryObservers with primogems
+    private void updateObservers() {
+        for (InventoryObserver observer : inventoryObservers) {
+            observer.update(this.primogems);
+        }
     }
 
     @Override
@@ -58,6 +77,7 @@ public class Inventory implements Writable {
     // EFFECTS: adds the given number of primogems to inventory only IF count > 0
     public void addPrimogems(int count) {
         primogems += Math.max(0, count);
+        updateObservers();
     }
 
     // EFFECTS: removes the given number of primogems from inventory only IF count > 0.
@@ -68,6 +88,7 @@ public class Inventory implements Writable {
         }
 
         primogems -= Math.max(0, count);
+        updateObservers();
     }
 
     // EFFECTS: returns the number of copies obtained for the given wish

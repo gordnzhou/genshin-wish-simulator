@@ -1,5 +1,6 @@
 package gui.components;
 
+import model.wish.Weapon;
 import model.wish.Wish;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class InventoryEntry {
 
     private JPanel entryPanel;
     private final Wish wish;
-    int copies;
+    private int copies;
 
     // MODIFIES: this, wishEntries, inventoryPanel
     // EFFECTS: constructs InventoryEntry from wish and creates panel card for wish;
@@ -56,9 +57,17 @@ public class InventoryEntry {
         JPanel footerPanel = new JPanel();
         footerPanel.setLayout(new BorderLayout());
 
-        footerPanel.add(new JLabel(wish.getName()), BorderLayout.NORTH);
+        String copiesString = "C" + Math.min(copies - 1, 6);
+        if (wish instanceof Weapon) {
+            copiesString = "R" + Math.min(copies, 5);
+        }
+        JLabel label = new JLabel(String.format("<html><font color='#54525E' size='4'><b>%s | %s</b></font></html>",
+                wish.getName(), copiesString));
+        label.setHorizontalTextPosition(SwingConstants.CENTER);
+        footerPanel.add(label, BorderLayout.NORTH);
 
         JPanel rarityPanel = new JPanel();
+        rarityPanel.setBorder(BorderFactory.createEmptyBorder(-5, 0, 0, 0));
         ImageIcon starIcon = loadImageFromPath(STAR_ICON_PATH, 0.6);
         for (int i = 0; i < wish.getRarity(); i++) {
             rarityPanel.add(new JLabel(starIcon));

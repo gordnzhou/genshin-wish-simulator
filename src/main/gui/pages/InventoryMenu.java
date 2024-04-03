@@ -18,25 +18,18 @@ import static gui.WishSim.*;
 import static gui.components.InventoryEntry.ENTRY_SIZE;
 
 public class InventoryMenu extends Page implements ActionListener {
-    private static final String CHARACTER_FACES_PATH = "data/static/images/character-faces/";
-
     private static final String PAGE_ID = "InventoryMenu";
 
     private JPanel inventoryPanel;
     private JButton exitButton;
     private JButton filterButton;
 
-    Map<String, ImageIcon> gachaImageCache;
-    Map<String, ImageIcon> faceImageCache;
-
     private int minRarity;
     private final Map<String, InventoryEntry> wishEntries;
 
-    public InventoryMenu(WishSim wishSim, Map<String, ImageIcon> gachaCache, Map<String, ImageIcon> faceCache) {
-        super(wishSim, PAGE_ID, MENU_BACKGROUND_PATH);
+    public InventoryMenu() {
+        super(PAGE_ID, MENU_BACKGROUND_PATH);
         super.page.setLayout(new BorderLayout());
-        this.faceImageCache = faceCache;
-        this.gachaImageCache = gachaCache;
         this.minRarity = 3;
         this.wishEntries = new HashMap<>();
         initInventoryPanel();
@@ -56,7 +49,8 @@ public class InventoryMenu extends Page implements ActionListener {
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setOpaque(false);
 
-        JLabel titleLabel = new JLabel("<html><u><b><font color='0xFFFFFF' size=+3>Your Inventory</b></u></html>\"");
+        JLabel titleLabel = new JLabel(
+                "<html><center><font color='#FFFFFF' size='20'><u>Your Inventory</u></font></center></html>");
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         super.page.add(scrollPane, BorderLayout.CENTER);
@@ -67,8 +61,6 @@ public class InventoryMenu extends Page implements ActionListener {
     // MODIFIES: this
     // EFFECTS: Displays wishes in inventory on GUI
     public void onPageSwitch(Inventory inventory) {
-        loadFaceImages(inventory.getWishes());
-
         for (Wish wish : inventory.getWishes()) {
             String entryKey = wish.getName();
             int copies = inventory.getWishCopies(wish);
@@ -88,19 +80,10 @@ public class InventoryMenu extends Page implements ActionListener {
     // MODIFIES: this
     // EFFECTS: returns wish icon for given wish's entry
     private ImageIcon createWishIcon(Wish wish) {
-        String key = wish.getName();
         if (wish instanceof Character) {
-            if (faceImageCache.containsKey(key)) {
-                return faceImageCache.get(key);
-            } else {
-                String faceImagePath = CHARACTER_FACES_PATH + wish.getName()
-                        .toLowerCase()
-                        .replaceAll("\\s", "-")
-                        .replaceAll("'", "_") + ".png";
-                return loadImageFromPath(faceImagePath, ENTRY_SIZE, ENTRY_SIZE);
-            }
+            return WishSim.getInstance().getFaceImage(wish);
         } else {
-            Image gachaImage = gachaImageCache.get(key).getImage();
+            Image gachaImage = WishSim.getInstance().getGachaImage(wish).getImage();
             gachaImage = gachaImage.getScaledInstance(gachaImage.getWidth(null) / 2, gachaImage.getHeight(null) / 2,
                     Image.SCALE_SMOOTH);
             BufferedImage croppedImage = new BufferedImage(ENTRY_SIZE, ENTRY_SIZE, BufferedImage.TYPE_INT_ARGB);
@@ -145,9 +128,9 @@ public class InventoryMenu extends Page implements ActionListener {
     // MODIFIES: this
     // EFFECTS: updates minRarity button in GUI
     private void updateMinRarity() {
-        this.minRarity += 1;
-        if (this.minRarity > 5) {
-            this.minRarity = 3;
+        minRarity += 1;
+        if (minRarity > 5) {
+            minRarity = 3;
         }
 
         filterByRarity();
@@ -157,32 +140,9 @@ public class InventoryMenu extends Page implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == exitButton) {
-            super.wishSim.switchToBannerMenu();
+            WishSim.getInstance().switchToBannerMenu();
         } else if (e.getSource() == filterButton) {
             updateMinRarity();
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: for every character wish, loads the character's face image and adds it to the cache
-    private void loadFaceImages(Set<Wish> wishes) {
-        for (Wish wish : wishes) {
-            if (!(wish instanceof Character)) {
-                continue;
-            }
-
-            String cacheKey = wish.getName();
-            String wishImagePath = CHARACTER_FACES_PATH + wish.getName()
-                    .toLowerCase()
-                    .replaceAll("\\s", "-")
-                    .replaceAll("'", "_") + ".png";
-
-            if (gachaImageCache.containsKey(cacheKey)) {
-                continue;
-            }
-
-            ImageIcon wishImageIcon = loadImageFromPath(wishImagePath, 0.5);
-            gachaImageCache.put(cacheKey, wishImageIcon);
         }
     }
 }

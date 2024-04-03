@@ -4,6 +4,7 @@ import exceptions.NotEnoughPrimosException;
 import gui.pages.*;
 import model.Inventory;
 import model.banner.Banner;
+import model.wish.Character;
 import model.wish.Wish;
 import persistence.JsonReader;
 import persistence.JsonWriter;
@@ -21,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static gui.components.InventoryEntry.ENTRY_SIZE;
+
 public class WishSim extends JFrame {
     public static final int STARTING_PRIMOGEMS = 5000;
     public static final int WIDTH = 1200;
@@ -31,7 +34,10 @@ public class WishSim extends JFrame {
     private static final String STANDARD_BANNER_JSON_PATH = "./data/static/standard_banner.json";
     private static final String EVENT_BANNER_JSON_PATH = "./data/static/event_banner.json";
     private static final String FONT_PATH = "data/static/fonts/genshin-font.ttf";
+    private static final String GACHA_SPLASH_PATH = "data/static/images/gacha-splashes/";
+    private static final String CHARACTER_FACES_PATH = "data/static/images/character-faces/";
 
+    private static WishSim wishSim;
     private Banner standardBanner;
     private Banner eventBanner;
     private Banner currentBanner;
@@ -40,8 +46,7 @@ public class WishSim extends JFrame {
     private JsonReader jsonReader;
 
     private CardLayout cards;
-    private JPanel wishSim;
-
+    private JPanel wishSimPanel;
     private Page currentPage;
     private BannerMenu bannerMenu;
     private InventoryMenu inventoryMenu;
@@ -52,19 +57,33 @@ public class WishSim extends JFrame {
     private Map<String, ImageIcon> faceImageCache;
 
     public static void main(String[] args) {
-        new WishSim();
+        wishSim = new WishSim();
+        wishSim.initGui();
     }
 
-    public WishSim() {
-        super("Genshin Wish Simulator");
-        this.initializeFields();
-        this.initializeFont();
-        this.initializeDisplay();
-        this.initializePages();
+    // EFFECTS: returns this wishSim instance
+    public static WishSim getInstance() {
+        return wishSim;
+    }
 
-        WishMouseListener wml = new WishMouseListener();
-        addMouseListener(wml);
-        setVisible(true);
+    // EFFECTS: initializes field and font for wishSim
+    private WishSim() {
+        super("Genshin Wish Simulator");
+        initializeFields();
+        initializeFont();
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes internal field values
+    private void initializeFields() {
+        this.standardBanner = loadBannerFromPath(STANDARD_BANNER_JSON_PATH);
+        this.eventBanner = loadBannerFromPath(EVENT_BANNER_JSON_PATH);
+        this.currentBanner = this.eventBanner;
+        this.inventory = new Inventory(new HashMap<>(), STARTING_PRIMOGEMS);
+        this.jsonReader = new JsonReader(JSON_STORE);
+        this.jsonWriter = new JsonWriter(JSON_STORE);
+        this.gachaImageCache = new HashMap<>();
+        this.faceImageCache = new HashMap<>();
     }
 
     // MODIFIES: this
@@ -83,39 +102,36 @@ public class WishSim extends JFrame {
     }
 
     // MODIFIES: this
-    // EFFECTS: initializes internal field values
-    private void initializeFields() {
-        this.standardBanner = loadBannerFromPath(STANDARD_BANNER_JSON_PATH);
-        this.eventBanner = loadBannerFromPath(EVENT_BANNER_JSON_PATH);
-        this.currentBanner = this.eventBanner;
-        this.inventory = new Inventory(new HashMap<>(), STARTING_PRIMOGEMS);
-        this.jsonReader = new JsonReader(JSON_STORE);
-        this.jsonWriter = new JsonWriter(JSON_STORE);
-        this.gachaImageCache = new HashMap<>();
-        this.faceImageCache = new HashMap<>();
-    }
-
-    // MODIFIES: this
-    // EFFECTS: initializes JFrame display elements
-    private void initializeDisplay() {
+    // EFFECTS: starts GUI for WishSim
+    private void initGui() {
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(false);
+        initPages();
+        WishMouseListener wml = new WishMouseListener();
+        addMouseListener(wml);
+        setVisible(true);
     }
 
-    private void initializePages() {
+    // MODIFIES: this
+    // EFFECTS: initializes all GUI pages
+    private void initPages() {
         cards = new CardLayout();
-        wishSim = new JPanel(cards);
-        setContentPane(wishSim);
+        wishSimPanel = new JPanel(cards);
+        setContentPane(wishSimPanel);
 
-        bannerMenu = new BannerMenu(this, STARTING_PRIMOGEMS);
-        inventoryMenu = new InventoryMenu(this, gachaImageCache, faceImageCache);
-        wishAnimation = new WishAnimation(this);
-        wishResult = new WishResult(this, gachaImageCache);
+        bannerMenu = new BannerMenu();
+        inventory.addObserver(bannerMenu.getMultipleWishButton());
+        inventory.addObserver(bannerMenu.getSingleWishButton());
+        inventory.addObserver(bannerMenu.getPrimogemCounter());
+        inventory.addPrimogems(0);
+
+        inventoryMenu = new InventoryMenu();
+        wishAnimation = new WishAnimation();
+        wishResult = new WishResult();
         currentPage = bannerMenu;
     }
 
-    // REQUIRES: path is a valid path to a json file
     // EFFECTS: loads banners from the JSON file at the given path and returns it
     private Banner loadBannerFromPath(String path) {
         try {
@@ -139,11 +155,10 @@ public class WishSim extends JFrame {
             return;
         }
 
-        List<Wish> wishes = this.currentBanner.makeWish(count);
+        List<Wish> wishes = currentBanner.makeWish(count);
         for (Wish wish : wishes) {
-            this.inventory.addWish(wish);
+            inventory.addWish(wish);
         }
-        this.bannerMenu.updatePrimogems(this.inventory.getPrimogems());
 
         switchToWishAnimation(wishes);
     }
@@ -154,7 +169,7 @@ public class WishSim extends JFrame {
     private boolean removePrimogems(int cost) {
         boolean success = true;
         try {
-            this.inventory.removePrimogems(cost);
+            inventory.removePrimogems(cost);
         } catch (NotEnoughPrimosException e) {
             success = false;
             JOptionPane.showMessageDialog(null,
@@ -214,7 +229,7 @@ public class WishSim extends JFrame {
     // EFFECTS: switches page to nextPage and displays it
     private void switchPage(Page nextPage) {
         currentPage = nextPage;
-        cards.show(wishSim, nextPage.getPageId());
+        cards.show(wishSimPanel, nextPage.getPageId());
         repaint();
     }
 
@@ -226,7 +241,6 @@ public class WishSim extends JFrame {
             return;
         }
         inventory.addPrimogems(count);
-        this.bannerMenu.updatePrimogems(inventory.getPrimogems());
     }
 
     // MODIFIES: this
@@ -234,7 +248,10 @@ public class WishSim extends JFrame {
     public void loadInventory() {
         try {
             inventory = jsonReader.readInventory();
-            this.bannerMenu.updatePrimogems(inventory.getPrimogems());
+            inventory.addObserver(bannerMenu.getMultipleWishButton());
+            inventory.addObserver(bannerMenu.getSingleWishButton());
+            inventory.addObserver(bannerMenu.getPrimogemCounter());
+            inventory.addPrimogems(0);
             System.out.println("Loaded inventory from " + JSON_STORE);
         } catch (IOException e) {
             System.out.println("Unable to banner read from path: " + JSON_STORE);
@@ -254,15 +271,54 @@ public class WishSim extends JFrame {
         }
     }
 
-    private void handleMousePressed() {
-        currentPage.handleMousePressed();
+    // MODIFIES: this
+    // EFFECTS: returns the cached gacha image for wish; if not cached,
+    //          generates a new gacha image and adds it to cache
+    public ImageIcon getGachaImage(Wish wish) {
+        String wishName = wish.getName();
+        if (gachaImageCache.containsKey(wishName)) {
+            return gachaImageCache.get(wishName);
+        }
+
+        String wishImagePath = GACHA_SPLASH_PATH + wish.getName()
+                .toLowerCase()
+                .replaceAll("\\s", "-")
+                .replaceAll("'", "_") + ".png";
+
+        ImageIcon wishImageIcon;
+        if (wish instanceof Character) {
+            wishImageIcon = loadImageFromPath(wishImagePath, 800, 800);
+        } else {
+            wishImageIcon = loadImageFromPath(wishImagePath, 0.77);
+            assert wishImageIcon != null;
+            if (wishImageIcon.getIconHeight() < 300 & wishImageIcon.getIconWidth() < 300) {
+                wishImageIcon = loadImageFromPath(wishImagePath, 1.5);
+            }
+        }
+        gachaImageCache.put(wishName, wishImageIcon);
+
+        return wishImageIcon;
     }
 
-    private class WishMouseListener extends MouseAdapter {
-        public void mousePressed(MouseEvent e) {
-            handleMousePressed();
+    // REQUIRES: wishName is a name of a CHARACTER
+    // MODIFIES: this
+    // EFFECTS: returns the cached face image for wish; if not cached,
+    //          generates a new face image and adds it to cache
+    public ImageIcon getFaceImage(Wish wish) {
+        String wishName = wish.getName();
+        if (faceImageCache.containsKey(wishName)) {
+            return faceImageCache.get(wishName);
         }
+
+        String faceImagePath = CHARACTER_FACES_PATH + wish.getName()
+                .toLowerCase()
+                .replaceAll("\\s", "-")
+                .replaceAll("'", "_") + ".png";
+        ImageIcon faceImageIcon = loadImageFromPath(faceImagePath, ENTRY_SIZE, ENTRY_SIZE);
+        faceImageCache.put(wishName, faceImageIcon);
+        return faceImageIcon;
     }
+
 
     // EFFECTS: loads path's image with given width and height; returns a JLabel containing the scaled image
     // or an empty JLabel if there was an error reading the image
@@ -289,6 +345,16 @@ public class WishSim extends JFrame {
         } catch (IOException e) {
             System.out.println("Error Reading Image from '" + path + "' : " + e.getMessage());
             return null;
+        }
+    }
+
+    private void handleMousePressed() {
+        currentPage.handleMousePressed();
+    }
+
+    private class WishMouseListener extends MouseAdapter {
+        public void mousePressed(MouseEvent e) {
+            handleMousePressed();
         }
     }
 }
