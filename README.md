@@ -22,3 +22,47 @@ bring that excitement to a broader audience.
 - I would like an option to load in my previous wishes
 - I would like an option to save my current wishes 
 - I want to be able to wish from different types of banners
+
+
+### Phase 4: Task 2
+```dtd
+Wed Apr 03 21:09:27 PDT 2024
+Added 0 primogems to inventory
+
+Wed Apr 03 21:09:30 PDT 2024
+Obtained a 'Noelle' (NEW)
+
+Wed Apr 03 21:09:30 PDT 2024
+Obtained a 'Kirara' (NEW)
+
+Wed Apr 03 21:09:30 PDT 2024
+Obtained a 'Raven Bow' (NEW)
+
+Wed Apr 03 21:09:30 PDT 2024
+Obtained a 'Magic Guide' (NEW)
+
+Wed Apr 03 21:09:30 PDT 2024
+Obtained a 'Cool Steel' (NEW)
+
+Wed Apr 03 21:09:30 PDT 2024
+Obtained a 'Magic Guide'
+
+Wed Apr 03 21:09:30 PDT 2024
+Obtained a 'Ferrous Shadow' (NEW)
+
+Wed Apr 03 21:09:34 PDT 2024
+Obtained a 'Gaming' (NEW)
+
+Wed Apr 03 21:09:43 PDT 2024
+Obtained a 'Rainslasher' (NEW)
+
+Wed Apr 03 21:09:43 PDT 2024
+Obtained a 'Noelle'
+
+Wed Apr 03 21:09:48 PDT 2024
+Added 29829 primogems to inventory
+
+Wed Apr 03 21:09:50 PDT 2024
+Obtained a 'Emerald Orb'
+```
+
