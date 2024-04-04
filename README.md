@@ -24,7 +24,7 @@ bring that excitement to a broader audience.
 - I want to be able to wish from different types of banners
 
 
-### Phase 4: Task 2
+## Phase 4: Task 2
 ```dtd
 Wed Apr 03 21:09:27 PDT 2024
 Added 0 primogems to inventory
@@ -66,3 +66,14 @@ Wed Apr 03 21:09:50 PDT 2024
 Obtained a 'Emerald Orb'
 ```
 
+## Phase 4: Task 3
+### UML Diagram
+![UML Image](data/GenshinWishSimUML.drawio.png)
+
+### How would I improve my design?
+Overall, I am quite satisfied with my design, but one change I would make is I to abstract away 
+the image loading for my GUI into its own class. Since my GUI utilizes a large of number of images,
+I implemented an image caching system in `WishSim` that facilates loading images from files and manages their access for other pages 
+that need them. An issue I've been facing is that images take a long time to individually load, causing longer loading times. Having a dedicated image manager
+class would not only make the code easier to understand, but will also make implementing optimizations 
+to the image loading possible.
